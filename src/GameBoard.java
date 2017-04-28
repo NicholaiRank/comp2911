@@ -124,9 +124,9 @@ public class GameBoard {
 		String retString = "";
 		for (int i = 0; i < x; ++i) {
 			for (int j = 0; j < y; j++){
-				Object addText = matrix.get(i).get(j);
-				if (addText == null) addText = "X";
-				retString += addText;
+				GameBoardObject addText = (GameBoardObject) matrix.get(i).get(j);
+				if (addText == null) retString += " ";
+				else retString += addText.getByteRep();
 			}
 			retString += "\n";
 		}
