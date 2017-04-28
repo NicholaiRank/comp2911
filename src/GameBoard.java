@@ -45,7 +45,7 @@ public class GameBoard {
 		for (int i = 0; i < x; ++i) {
 			for (int j = 0; j < y; j++){
 				Object curr = matrix.get(i).get(j);
-				if (curr.equals(searchObj)){
+				if (curr != null && curr.equals(searchObj)){
 					Coordinates c = new Coordinates(i,j);
 					return c;
 				}
@@ -77,24 +77,47 @@ public class GameBoard {
 	}
 	
 	/**
-	 * Removes an object from the GameBoard
+	 * Sets the position (x,y) to null on GameBoard
 	 * @pre (x,y) is in GameBoard (x <= this.x && y <= this.y)
 	 * @param x - The x coordinate
 	 * @param y - The y coordinate
 	 */
 	public void removeObj(int x,int y){
-		System.out.println(y);
 		matrix.get(x).set(y, null);
 	}
 	
 	/**
-	 * Removes an object from the GameBoard
+	 * Sets the position (x,y) to null on GameBoard
 	 * @pre (x,y) is in GameBoard (c.getX() <= this.x && c.getY() <= this.y)
 	 * @param c - The Coordinates of the object to be added
 	 */
 	public void removeObj(Coordinates c){
 		removeObj(c.getX(),c.getY());
 	}
+	
+	/**
+	 * Moves an object from its current location to
+	 * 	(x,y) on GameBoard
+	 * @pre (x,y) is in GameBoard (x <= this.x && y <= this.y)
+	 * @param x - The x coordinate
+	 * @param y - The y coordinate
+	 */
+	public void moveObj(Object obj,int x,int y){
+		Coordinates c = getLocationOf(obj);
+		removeObj(c);
+		addObj(obj,x,y);
+	}
+	
+	/**
+	 * Moves an object from its current location to
+	 * 	(x,y) on GameBoard
+	 * @pre (x,y) is in GameBoard (c.getX() <= this.x && c.getY() <= this.y)
+	 * @param c - The desired, final Coordinates of the object
+	 */
+	public void moveObj(Object obj,Coordinates c){
+		moveObj(obj,c.getX(),c.getY());
+	}
+	
 	
 	@Override
 	public String toString(){
