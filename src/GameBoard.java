@@ -2,19 +2,37 @@ import java.util.*;
 
 public class GameBoard {
 	private ArrayList<ArrayList<Object>> matrix;
-	private int x;
 	private int y;
+	private int x;
 	
 	public GameBoard(int x,int y){
-		this.matrix = new ArrayList<ArrayList<Object>>(x);
-		for (int i = 0; i < x; ++i) {
+		this.matrix = new ArrayList<ArrayList<Object>>(y);
+		for (int i = 0; i < y; ++i) {
 			this.matrix.add(new ArrayList<Object>());
-			for (int j = 0; j < y; j++){
+			for (int j = 0; j < x; j++){
 				this.matrix.get(i).add(null);
 			}
 		}
-		this.x = x;
 		this.y = y;
+		this.x = x;
+	}
+	
+	/**
+	 * Adds an outerWall to the board (it is recommended this is used
+	 *  immediately after creating a new board)
+	 */
+	public void addOuterWall(){
+		System.out.println(x);
+		for (int i = 0; i < x; i++){
+			Wall w = new Wall();
+			addObj(w,i,0);
+			addObj(w,i,y-1);
+		}
+		for (int i = 1; i < y-1; i++){
+			Wall w = new Wall();
+			addObj(w,0,i);
+			addObj(w,x-1,i);
+		}
 	}
 	
 	/**
@@ -24,7 +42,7 @@ public class GameBoard {
 	 * @param y - The y coordinate
 	 */
 	public Object getObjectAt(int x, int y){
-		return matrix.get(x).get(y);
+		return matrix.get(y).get(x);
 	}
 	
 	/**
@@ -42,11 +60,11 @@ public class GameBoard {
 	 * @return The Coordinates of the object or null if not found (or null)
 	 */
 	public Coordinates getLocationOf(Object searchObj){
-		for (int i = 0; i < x; ++i) {
-			for (int j = 0; j < y; j++){
+		for (int i = 0; i < y; ++i) {
+			for (int j = 0; j < x; j++){
 				Object curr = matrix.get(i).get(j);
 				if (curr != null && curr.equals(searchObj)){
-					Coordinates c = new Coordinates(i,j);
+					Coordinates c = new Coordinates(j,i);
 					return c;
 				}
 			}
@@ -63,7 +81,7 @@ public class GameBoard {
 	 */
 	public void addObj(Object obj,int x,int y){
 		removeObj(x,y);
-		matrix.get(x).add(y, obj);
+		matrix.get(y).set(x, obj);
 	}
 	
 	/**
@@ -83,7 +101,7 @@ public class GameBoard {
 	 * @param y - The y coordinate
 	 */
 	public void removeObj(int x,int y){
-		matrix.get(x).set(y, null);
+		matrix.get(y).set(x, null);
 	}
 	
 	/**
@@ -122,8 +140,8 @@ public class GameBoard {
 	@Override
 	public String toString(){
 		String retString = "";
-		for (int i = 0; i < x; ++i) {
-			for (int j = 0; j < y; j++){
+		for (int i = 0; i < y; ++i) {
+			for (int j = 0; j < x; j++){
 				GameBoardObject addText = (GameBoardObject) matrix.get(i).get(j);
 				if (addText == null) retString += " ";
 				else retString += addText.getByteRep();
