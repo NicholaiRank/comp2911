@@ -16,6 +16,7 @@ public class testing {
 		
 		System.out.println(g);
 		Interaction i = new Interaction(g);
+		System.out.println("Moving left");
 		i.moveLeft(p);
 		System.out.println(g);
 		i.moveLeft(p);
@@ -25,6 +26,33 @@ public class testing {
 		i.moveLeft(p);
 		System.out.println(g);
 		i.moveLeft(p);
+		System.out.println(g);
+		System.out.println("Moving down");
+		i.moveDown(p);
+		System.out.println(g);
+		i.moveDown(p);
+		System.out.println(g);
+		i.moveDown(p);
+		System.out.println(g);
+		System.out.println("Moving up");
+		i.moveUp(p);
+		System.out.println(g);
+		i.moveUp(p);
+		System.out.println(g);
+		i.moveUp(p);
+		System.out.println(g);
+		i.moveUp(p);
+		System.out.println(g);
+		System.out.println("Moving right");
+		i.moveRight(p);
+		System.out.println(g);
+		i.moveRight(p);
+		System.out.println(g);
+		i.moveRight(p);
+		System.out.println(g);
+		i.moveRight(p);
+		System.out.println(g);
+		i.moveRight(p);
 		System.out.println(g);
 	}
 

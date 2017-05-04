@@ -24,6 +24,10 @@ public class Coordinates {
 		this.y = y;
 	}
 	
+	public Coordinates add(Coordinates c){
+		return new Coordinates(c.getX() + x, c.getY() + y);
+	}
+	
 	@Override
 	public String toString(){
 		return "[" + x + "," + y +"]";
