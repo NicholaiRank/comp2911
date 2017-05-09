@@ -62,9 +62,13 @@ public class KeyPress extends Application {
                     case DOWN:  goSouth = true; break;
                     case LEFT:  goWest  = true; break;
                     case RIGHT: goEast  = true; break;
+                    case W: goNorth = true; break;
+                    case S: goSouth = true; break;
+                    case A: goWest = true; break;
+                    case D: goEast = true; break;
                     case SHIFT: running = true; break;
                     case R: {
-			for (int i = 0; i < 15; i++) {
+                    	for (int i = 0; i < 15; i++) {
                     		for (int j = 0; j < 10; j++) {
                     			g.removeObj(i, j);
                     		}
@@ -91,6 +95,10 @@ public class KeyPress extends Application {
                     case DOWN:  goSouth = false; southPressed = false; break;
                     case LEFT:  goWest  = false; westPressed = false; break;
                     case RIGHT: goEast  = false; eastPressed = false; break;
+                    case W:    goNorth = false; northPressed = false; break;
+                    case S:  goSouth = false; southPressed = false; break;
+                    case A:  goWest  = false; westPressed = false; break;
+                    case D: goEast  = false; eastPressed = false; break;
                     case SHIFT: running = false; break;
                 }
             }
