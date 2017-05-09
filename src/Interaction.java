@@ -115,10 +115,12 @@ public class Interaction {
 	 * @pre canPlaceObj(c)
 	 */
 	private void moveBox(Box b, Coordinates c){		
-		if (board.getObjectAt(c).getClass() == Goal.class){
-			//if it's a goal, the entire position is reset
-			board.moveObj(b, c);
-			board.removeObj(c);
+		if (board.getObjectAt(c) != null) {
+			if (board.getObjectAt(c).getClass() == Goal.class){
+				//if it's a goal, the entire position is reset
+				board.moveObj(b, c);
+				board.removeObj(c);
+			}
 		} else {
 			board.moveObj(b, c);
 		}
