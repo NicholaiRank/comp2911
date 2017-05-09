@@ -17,7 +17,7 @@ import javafx.scene.media.MediaPlayer;
  */
 public class KeyPress extends Application {
 
-    private static final double W = 0, H = 0;
+    private static final double W = 50, H = 50;
 
     private static final String HERO_IMAGE_LOC =
             "http://www.polyvore.com/cgi/img-thing?.out=jpg&size=l&tid=22402544";
@@ -25,7 +25,8 @@ public class KeyPress extends Application {
     private Image heroImage;
     private Node hero;
     private int velocity;
-    private GameBoard g = new GameBoard(10, 10);
+    private GameBoard g = new GameBoard(15, 10);
+    private Interaction i = new Interaction(g);
 
 
     boolean running, goNorth, goSouth, goEast, goWest, grounded, northPressed, southPressed, eastPressed, westPressed;
@@ -36,15 +37,20 @@ public class KeyPress extends Application {
     	Media song = new Media(new File(songString).toURI().toString());
         MediaPlayer player = new MediaPlayer(song);
         player.setAutoPlay(true);
+        player.setCycleCount(MediaPlayer.INDEFINITE);
+        g.addObj(new Box(), 7, 5);
+        g.addObj(new Box(), 7, 3);
+        g.addObj(new Box(), 5, 5);
+        g.addObj(new Goal(), 13, 8);
+        g.addObj(new Goal(), 13, 1);
+        g.addObj(new Goal(), 1, 8);
+
         heroImage = new Image(HERO_IMAGE_LOC);
         hero = new ImageView(heroImage);
         g.addOuterWall();
         Group dungeon = new Group(hero);
-        Player newPlayer = new Player("ME");
+        Player newPlayer = new Player("PLAYER");
         g.addObj(newPlayer, 2, 2);
-
-
- //       moveHeroTo(W / 2, H / 2);
 
         Scene scene = new Scene(dungeon, W, H, Color.WHITE);
 
@@ -52,16 +58,24 @@ public class KeyPress extends Application {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case UP: {   
-                    	
-                    	goNorth = true;
-                    	break;                 
-                    }
+                    case UP: goNorth = true; break;                 
                     case DOWN:  goSouth = true; break;
                     case LEFT:  goWest  = true; break;
                     case RIGHT: goEast  = true; break;
                     case SHIFT: running = true; break;
-                }
+                    case R: {
+                    	g.addOuterWall();
+                    	g.removeObj(g.getLocationOf(newPlayer));
+                    	g.addObj(newPlayer, 2, 2);
+                        g.addObj(new Box(), 7, 5);
+                        g.addObj(new Box(), 7, 3);
+                        g.addObj(new Box(), 5, 5);
+                        g.addObj(new Goal(), 13, 8);
+                        g.addObj(new Goal(), 13, 1);
+                        g.addObj(new Goal(), 1, 8);
+                        System.out.println(g.toString());
+                    }
+                }	
             }
         });
 
@@ -88,34 +102,33 @@ public class KeyPress extends Application {
             	player.setAutoPlay(true);
                 int dx = 0, dy = 0;
 
-                if (goNorth && grounded) {
+                if (goNorth) {
                 	dy += 1;
-                	velocity = 20;
-                	grounded = false;
                 	if (northPressed == false) {
                 		northPressed = true;
-                		g.moveObj(newPlayer, g.getLocationOf(newPlayer).getX(), g.getLocationOf(newPlayer).getY() - 1);
+                		i.moveUp(newPlayer);                		
                 	}
                 }
-                if (goSouth == true) {
+                if (goSouth) {
                 	dy -= 1;
                   	if (southPressed == false) {
                 		southPressed = true;
-                		g.moveObj(newPlayer, g.getLocationOf(newPlayer).getX(), g.getLocationOf(newPlayer).getY() + 1);
+                		i.moveDown(newPlayer);
+                		
                 	}                	                	
                 }
                 if (goEast) {
                 	dx += 3;
                   	if (eastPressed == false) {
                 		eastPressed = true;
-                		g.moveObj(newPlayer, g.getLocationOf(newPlayer).getX() + 1, g.getLocationOf(newPlayer).getY());
+                		i.moveRight(newPlayer);
                 	}
                 }
                 if (goWest) {
                 	dx -= 3;
                   	if (westPressed == false) {
                 		westPressed = true;
-                		g.moveObj(newPlayer, g.getLocationOf(newPlayer).getX() - 1, g.getLocationOf(newPlayer).getY());
+                		i.moveLeft(newPlayer);
                 	}
                 }
                 if (running) { dx *= 2; dy *= 2; }
