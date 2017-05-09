@@ -22,7 +22,6 @@ public class GameBoard {
 	 *  immediately after creating a new board)
 	 */
 	public void addOuterWall(){
-		System.out.println(x);
 		for (int i = 0; i < x; i++){
 			Wall w = new Wall();
 			addObj(w,i,0);
@@ -139,7 +138,7 @@ public class GameBoard {
 	
 	@Override
 	public String toString(){
-		String retString = "";
+		String retString = "\n\n\n\n\n\n\n\n\n";
 		for (int i = 0; i < y; ++i) {
 			for (int j = 0; j < x; j++){
 				GameBoardObject addText = (GameBoardObject) matrix.get(i).get(j);
