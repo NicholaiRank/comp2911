@@ -64,8 +64,12 @@ public class KeyPress extends Application {
                     case RIGHT: goEast  = true; break;
                     case SHIFT: running = true; break;
                     case R: {
+			for (int i = 0; i < 15; i++) {
+                    		for (int j = 0; j < 10; j++) {
+                    			g.removeObj(i, j);
+                    		}
+                    	}
                     	g.addOuterWall();
-                    	g.removeObj(g.getLocationOf(newPlayer));
                     	g.addObj(newPlayer, 2, 2);
                         g.addObj(new Box(), 7, 5);
                         g.addObj(new Box(), 7, 3);
