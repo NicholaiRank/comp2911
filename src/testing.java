@@ -1,5 +1,4 @@
-
-public class testing {
+public class testing{
 
 	public static void main(String[] args) {
 		GameBoard g = new GameBoard(20,10);
@@ -11,9 +10,11 @@ public class testing {
 		g.addObj(p,7,5);
 		g.addObj(b,4,5);
 		g.addObj(o,3,5);
-		System.out.println(g);
 		
 		
+		while (true){}
+		
+		/*
 		System.out.println(g);
 		Interaction i = new Interaction(g);
 		System.out.println("Moving left");
@@ -60,6 +61,7 @@ public class testing {
 		System.out.println(g);
 		System.out.println(i.moveRight(p));
 		System.out.println(g);
+		*/
 	}
-
+	
 }
