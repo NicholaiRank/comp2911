@@ -72,11 +72,13 @@ public class Interaction {
 			Coordinates nextToDesired = new Coordinates(desired.getX(), desired.getY()).add(offset);
 			
 			if (canPlaceObj(nextToDesired)){
-				//moves box first
-				moveBox((Box) nextToMe,nextToDesired);
-				//then moves player to boxe's original position
-				board.moveObj(player,desired);
-				return true;
+				if (board.getObjectAt(nextToDesired) == null || board.getObjectAt(nextToDesired).getClass() != Box.class) {
+					//moves box first
+					moveBox((Box) nextToMe,nextToDesired);
+					//then moves player to boxe's original position
+					board.moveObj(player,desired);
+					return true;
+				}
 			}
 		}
 		
