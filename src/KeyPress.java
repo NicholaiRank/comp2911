@@ -33,11 +33,11 @@ public class KeyPress extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-    	String songString = "puzzleThink.mp3";
-    	Media song = new Media(new File(songString).toURI().toString());
-        MediaPlayer player = new MediaPlayer(song);
-        player.setAutoPlay(true);
-        player.setCycleCount(MediaPlayer.INDEFINITE);
+    	//String songString = "puzzleThink.mp3";
+    	//Media song = new Media(new File(songString).toURI().toString());
+        //MediaPlayer player = new MediaPlayer(song);
+        //player.setAutoPlay(true);
+        //player.setCycleCount(MediaPlayer.INDEFINITE);
         g.addObj(new Box(), 7, 5);
         g.addObj(new Box(), 7, 3);
         g.addObj(new Box(), 5, 5);
@@ -111,7 +111,7 @@ public class KeyPress extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-            	player.setAutoPlay(true);
+            	//player.setAutoPlay(true);
                 int dx = 0, dy = 0;
 
                 if (goNorth) {
