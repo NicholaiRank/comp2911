@@ -1,4 +1,3 @@
-
 public class Interaction {
 	private Player player;
 	private GameBoard board;

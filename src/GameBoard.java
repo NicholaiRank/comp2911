@@ -17,6 +17,14 @@ public class GameBoard {
 		this.x = x;
 	}
 	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
+	}
+	
 	/**
 	 * Adds an outerWall to the board (it is recommended this is used
 	 *  immediately after creating a new board)
@@ -138,8 +146,9 @@ public class GameBoard {
 	
 	@Override
 	public String toString(){
-		String retString = "\n\n\n\n\n\n\n\n\n";
+		String retString = "";
 		for (int i = 0; i < y; ++i) {
+			retString += i % 10;
 			for (int j = 0; j < x; j++){
 				GameBoardObject addText = (GameBoardObject) matrix.get(i).get(j);
 				if (addText == null) retString += " ";

@@ -155,7 +155,6 @@ public class KeyPress extends Application {
 /*
     private void moveHeroBy(int dx, int dy) {
  //       if (dx == 0 && dy == 0) return;
-
         final double cx = hero.getBoundsInLocal().getWidth()  / 2;
         final double cy = hero.getBoundsInLocal().getHeight() / 2;
 
@@ -165,7 +164,6 @@ public class KeyPress extends Application {
 
         moveHeroTo(x, y);
     }
-
     private void moveHeroTo(double x, double y) {
         final double cx = hero.getBoundsInLocal().getWidth()  / 2;
         final double cy = hero.getBoundsInLocal().getHeight() / 2;
