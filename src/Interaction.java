@@ -1,9 +1,25 @@
+import java.util.ArrayList;
+
 public class Interaction {
-	private Player player;
 	private GameBoard board;
 	
 	public Interaction(GameBoard board){
 		this.board = board;
+	}
+	
+	/**
+	 * Checks if a game interaction is complete
+	 * @return true if the game is complete, otherwise false
+	 */
+	public boolean isGameComplete(){
+		for (int i = 0; i < board.getX(); ++i) {
+			for (int j = 0; j < board.getY(); j++){
+				if (board.getObjectAt(i, j) == Goal.class){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
