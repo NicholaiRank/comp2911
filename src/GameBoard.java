@@ -1,14 +1,20 @@
 import java.util.*;
 
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.TilePane;
+
 public class GameBoard {
-	private ArrayList<ArrayList<Object>> matrix;
+	private ArrayList<ArrayList<GameBoardObject>> matrix;
 	private int y;
 	private int x;
 	
 	public GameBoard(int x,int y){
-		this.matrix = new ArrayList<ArrayList<Object>>(y);
+		this.matrix = new ArrayList<ArrayList<GameBoardObject>>(y);
 		for (int i = 0; i < y; ++i) {
-			this.matrix.add(new ArrayList<Object>());
+			this.matrix.add(new ArrayList<GameBoardObject>());
 			for (int j = 0; j < x; j++){
 				this.matrix.get(i).add(null);
 			}
@@ -86,7 +92,7 @@ public class GameBoard {
 	 * @param x - The x coordinate
 	 * @param y - The y coordinate
 	 */
-	public void addObj(Object obj,int x,int y){
+	public void addObj(GameBoardObject obj,int x,int y){
 		removeObj(x,y);
 		matrix.get(y).set(x, obj);
 	}
@@ -97,7 +103,7 @@ public class GameBoard {
 	 * @pre (x,y) is in GameBoard (c.getX() <= this.x && c.getY() <= this.y)
 	 * @param c - The Coordinates of the object to be added
 	 */
-	public void addObj(Object obj,Coordinates c){
+	public void addObj(GameBoardObject obj,Coordinates c){
 		addObj(obj,c.getX(),c.getY());
 	}
 	
@@ -127,7 +133,7 @@ public class GameBoard {
 	 * @param x - The x coordinate
 	 * @param y - The y coordinate
 	 */
-	public void moveObj(Object obj,int x,int y){
+	public void moveObj(GameBoardObject obj,int x,int y){
 		Coordinates c = getLocationOf(obj);
 		removeObj(c);
 		addObj(obj,x,y);
@@ -139,10 +145,79 @@ public class GameBoard {
 	 * @pre (x,y) is in GameBoard (c.getX() <= this.x && c.getY() <= this.y)
 	 * @param c - The desired, final Coordinates of the object
 	 */
-	public void moveObj(Object obj,Coordinates c){
+	public void moveObj(GameBoardObject obj,Coordinates c){
 		moveObj(obj,c.getX(),c.getY());
 	}
 	
+	/**
+	 * Builds a graphic representation of the board based on the matrix 
+	 * @param tileSet A TileSet containing the desired set of tiles that are to be displayed
+	 */
+	public TilePane buildGraphics(TileSet tileSet){
+		final int PLAYER = 0;
+		final int BG = 1;
+		final int CRATE = 2;
+		final int GOAL = 3;
+		final int WALL = 4;
+		
+		ArrayList<Image> tiles = tileSet.getTileSet();
+
+		javafx.scene.image.Image heroImage = tiles.get(PLAYER);
+		javafx.scene.image.Image bgImage = tiles.get(BG);
+		javafx.scene.image.Image crateImage = tiles.get(CRATE);
+		javafx.scene.image.Image goalImage = tiles.get(GOAL);
+		javafx.scene.image.Image wallImage = tiles.get(WALL);
+		
+		TilePane tilePane = new TilePane(); 
+		tilePane.setPrefColumns(x);
+		tilePane.setPrefRows(y);
+		tilePane.setTileAlignment(Pos.TOP_RIGHT);
+		
+		for (ArrayList<GameBoardObject> array: matrix) {
+			for (GameBoardObject gameObject: array) {
+				try{
+					char symbol = gameObject.getByteRep();
+					
+					switch (symbol) {
+						case 'P': {
+							Node hero = new ImageView(heroImage);
+							tilePane.getChildren().add(hero);
+							break;
+						}
+						case ' ': {
+							Node bg = new ImageView(bgImage);
+							tilePane.getChildren().add(bg);
+							break;
+						}
+						case 'B': {
+							Node crate = new ImageView(crateImage);
+							tilePane.getChildren().add(crate);
+							break;
+						}
+						case 'X': {
+							Node goal = new ImageView(goalImage);
+							tilePane.getChildren().add(goal);
+							break;
+						}
+						case '#': {
+							Node wall = new ImageView(wallImage);
+							tilePane.getChildren().add(wall);
+							break;
+						}
+				
+					}
+				} catch (NullPointerException ne) {
+					Node bg = new ImageView(bgImage);
+					tilePane.getChildren().add(bg);
+				}
+				
+			}
+			
+		}
+		
+		return tilePane;
+		
+	}
 	
 	@Override
 	public String toString(){
