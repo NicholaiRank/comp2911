@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -32,8 +33,16 @@ public class Game extends Application {
     private TileSet tileset;
     private Interaction interaction;
     
+    /* SCENE FLAGS */
+    private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
+    
     @Override
     public void start(Stage stage) throws Exception {
+    	// unset all flags
+    	unsetNewGame();
+    	unsetGame();
+    	unsetTitle();
+    	unsetRoomComplete();
     	
     	// Get tileset
     	tileset = new TileSet();
@@ -45,50 +54,6 @@ public class Game extends Application {
         player.setAutoPlay(true);
         player.setCycleCount(MediaPlayer.INDEFINITE);
         
-        // BUILD GAMEBOARD HERE
-/*        Player newPlayer = new Player("PLAYER");
-        GameBoardGen ga = new GameBoardGen(10,10,3,newPlayer);
-		g = new GameBoard(10,10);
-		g.addOuterWall();
-		for (Coordinates c: ga.getPath()){
-			g.addObj(new Wall(), c);
-		}
-        
-        // Insert player
-        
-        g.addObj(newPlayer, 2, 2);
-
-        // Attach keypress
-        keypress = new KeyPress(g,newPlayer);
-        interaction = new Interaction(g);
-		
-        // Build graphics
-        TilePane tilePane = g.buildGraphics(tileset);
-
-        
-        // Make the scene
-        Group dungeon = new Group(tilePane);
-        Scene scene = new Scene(dungeon, W, H, Color.WHITE);
- 
-        // Handle scene events
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                keypress.setFlag(event.getCode());
-                //keypress.handleInput();
-                
-                
-            }
-        });
-
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-            	keypress.resetFlags(event.getCode());
-            }
-        });
-
-*/
         Scene scene = showNewGameScene();
         stage.setScene(scene);
         stage.setTitle("Wobquest");
@@ -117,6 +82,10 @@ public class Game extends Application {
     }
     public static void main(String[] args) { launch(args); }
     
+    /**
+     * Generates a scene that displays the current state of the gameboard
+     * @return Scene displaying current state of GameBoard
+     */
     private Scene showGameScene(){
     	// Make change to the gameboard as dictated by input
     	keypress.handleInput();
@@ -125,13 +94,17 @@ public class Game extends Application {
     	TilePane tilePane = g.buildGraphics(tileset);
 
     	Group dungeon = new Group(tilePane);
-        Scene scene = new Scene(dungeon, W, H, Color.WHITE);
+        Scene scene = new Scene(dungeon, W, H, Color.BLACK);
  
         // Handle scene events
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
+                if (interaction.isGameComplete()){
+                	
+                	setRoomComplete();
+                }
             }
         });
 
@@ -139,6 +112,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
             	keypress.resetFlags(event.getCode());
+            	unsetGame();
             }
         });
     	return scene;
@@ -165,14 +139,14 @@ public class Game extends Application {
         
         // Make the scene
         Group dungeon = new Group(tilePane);
-        Scene scene = new Scene(dungeon, W, H, Color.WHITE);
+        Scene scene = new Scene(dungeon, W, H, Color.BLACK);
  
         // Handle scene events
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
-                //keypress.handleInput();
+                setGame();
                 
                 
             }
@@ -182,9 +156,53 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
             	keypress.resetFlags(event.getCode());
+            	unsetNewGame();
             }
         });
         
     	return scene;
     }
+    
+    private Scene showRoomCompleteScene() {
+    	Label victoryLabel = new Label("Room Completed. Congratulations.");
+    	Group completedRoom = new Group(victoryLabel);
+    	
+    	Scene scene = new Scene(completedRoom, W, H, Color.BLACK);
+    	scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
+    		@Override
+    		public void handle(KeyEvent event) {
+    			unsetRoomComplete();
+    			setNewGame();
+    		}
+    	});
+    	return scene;
+    }
+    
+    /****************************************
+     * SET/UNSET SCENE FLAG METHODS
+     ***************************************/
+	public void setNewGame() {
+		scene_newgame = true;
+	}
+	public void unsetNewGame() {
+		scene_newgame = false;
+	}
+	public void setGame() {
+		scene_game = true;
+	}
+	public void unsetGame() {
+		scene_game = false;
+	}
+	public void setTitle() {
+		scene_title = true;
+	}
+	public void unsetTitle() {
+		scene_title = false;
+	}
+	public void setRoomComplete() {
+		scene_roomcomplete = true;
+	}
+	public void unsetRoomComplete() {
+		scene_roomcomplete = false;
+	}
 }
