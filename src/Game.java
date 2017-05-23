@@ -17,6 +17,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /*
@@ -32,12 +34,17 @@ public class Game extends Application {
     private KeyPress keypress;
     private TileSet tileset;
     private Interaction interaction;
+    private Scene scene;
+    
+    
+    private Font gameFont;
     
     /* SCENE FLAGS */
     private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
     
     @Override
     public void start(Stage stage) throws Exception {
+    	
     	// unset all flags
     	unsetNewGame();
     	unsetGame();
@@ -47,14 +54,18 @@ public class Game extends Application {
     	// Get tileset
     	tileset = new TileSet();
    	
-    	
-    	String songString = "puzzleThink.mp3";
+    	// Initialise resources
+    	String songString = "resources/music/puzzleThink.mp3";
     	Media song = new Media(new File(songString).toURI().toString());
         MediaPlayer player = new MediaPlayer(song);
         player.setAutoPlay(true);
         player.setCycleCount(MediaPlayer.INDEFINITE);
         
-        Scene scene = showNewGameScene();
+        String fontString = "resources/fonts/PressStart2P.ttf";
+        String fontFile = new File(fontString).toURI().toString();
+        gameFont = Font.loadFont(fontFile, 30);
+        		
+        scene = showNewGameScene();
         stage.setScene(scene);
         stage.setTitle("Wobquest");
         stage.show();
@@ -65,7 +76,9 @@ public class Game extends Application {
             public void handle(long now) {
             	// Play music
             	player.setAutoPlay(true);
-            	Scene scene = showGameScene();
+            	if (scene_game == true) scene = showGameScene();
+            	else if (scene_roomcomplete == true) scene = showRoomCompleteScene();
+            	else if (scene_newgame == true) scene = showNewGameScene();
 
                 stage.setScene(scene);
                 stage.setTitle("Wobquest");
@@ -102,7 +115,7 @@ public class Game extends Application {
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
                 if (interaction.isGameComplete()){
-                	
+                	unsetGame();
                 	setRoomComplete();
                 }
             }
@@ -112,7 +125,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
             	keypress.resetFlags(event.getCode());
-            	unsetGame();
+            	
             }
         });
     	return scene;
@@ -146,6 +159,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
+                unsetNewGame();
                 setGame();
                 
                 
@@ -156,7 +170,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
             	keypress.resetFlags(event.getCode());
-            	unsetNewGame();
+            	
             }
         });
         
@@ -164,8 +178,16 @@ public class Game extends Application {
     }
     
     private Scene showRoomCompleteScene() {
-    	Label victoryLabel = new Label("Room Completed. Congratulations.");
-    	Group completedRoom = new Group(victoryLabel);
+    	Text t = new Text();
+    	t.setText("\n\n\n        Room Completed. \n        Congratulations.");
+    	t.setFont(gameFont);
+    	t.setFill(Color.RED);
+    	
+    	Text pressNext = new Text();
+    	pressNext.setText("\n\n\n\n\n\n\n\n    Press any key to continue");
+    	pressNext.setFont(gameFont);
+    	pressNext.setFill(Color.WHITE);
+    	Group completedRoom = new Group(t, pressNext);
     	
     	Scene scene = new Scene(completedRoom, W, H, Color.BLACK);
     	scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
@@ -181,28 +203,28 @@ public class Game extends Application {
     /****************************************
      * SET/UNSET SCENE FLAG METHODS
      ***************************************/
-	public void setNewGame() {
+	private void setNewGame() {
 		scene_newgame = true;
 	}
-	public void unsetNewGame() {
+	private void unsetNewGame() {
 		scene_newgame = false;
 	}
-	public void setGame() {
+	private void setGame() {
 		scene_game = true;
 	}
-	public void unsetGame() {
+	private void unsetGame() {
 		scene_game = false;
 	}
-	public void setTitle() {
+	private void setTitle() {
 		scene_title = true;
 	}
-	public void unsetTitle() {
+	private void unsetTitle() {
 		scene_title = false;
 	}
-	public void setRoomComplete() {
+	private void setRoomComplete() {
 		scene_roomcomplete = true;
 	}
-	public void unsetRoomComplete() {
+	private void unsetRoomComplete() {
 		scene_roomcomplete = false;
 	}
 }
