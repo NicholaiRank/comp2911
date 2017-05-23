@@ -46,7 +46,7 @@ public class Game extends Application {
         player.setCycleCount(MediaPlayer.INDEFINITE);
         
         // BUILD GAMEBOARD HERE
-        Player newPlayer = new Player("PLAYER");
+/*        Player newPlayer = new Player("PLAYER");
         GameBoardGen ga = new GameBoardGen(10,10,3,newPlayer);
 		g = new GameBoard(10,10);
 		g.addOuterWall();
@@ -88,7 +88,8 @@ public class Game extends Application {
             }
         });
 
-
+*/
+        Scene scene = showNewGameScene();
         stage.setScene(scene);
         stage.setTitle("Wobquest");
         stage.show();
