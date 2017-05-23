@@ -5,14 +5,20 @@ import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -27,7 +33,7 @@ import javafx.stage.Stage;
  */
 
 public class Game extends Application {
-    private static final double W = 960, H = 720;
+    private static final double W = 1280, H = 840;
 
     private int velocity;
     private GameBoard g;
@@ -56,20 +62,19 @@ public class Game extends Application {
    	
     	// Initialise resources
     	String songString = "resources/music/puzzleThink.mp3";
-    	Media song = new Media(new File(songString).toURI().toString());
+    	Media song = new Media(getFileName(songString));
         MediaPlayer player = new MediaPlayer(song);
         player.setAutoPlay(true);
         player.setCycleCount(MediaPlayer.INDEFINITE);
         
         String fontString = "resources/fonts/PressStart2P.ttf";
-        String fontFile = new File(fontString).toURI().toString();
-        gameFont = Font.loadFont(fontFile, 30);
+        gameFont = Font.loadFont(getFileName(fontString), 30);
         		
-        scene = showNewGameScene();
+        scene = showTitleScreenScene();
         stage.setScene(scene);
         stage.setTitle("Wobquest");
         stage.show();
-        System.out.println(g.toString());
+
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -79,11 +84,12 @@ public class Game extends Application {
             	if (scene_game == true) scene = showGameScene();
             	else if (scene_roomcomplete == true) scene = showRoomCompleteScene();
             	else if (scene_newgame == true) scene = showNewGameScene();
+            	else scene = showTitleScreenScene();
 
                 stage.setScene(scene);
                 stage.setTitle("Wobquest");
                 stage.show();
-                System.out.println(g.toString());
+
             };
             
             
@@ -114,7 +120,7 @@ public class Game extends Application {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
-                if (interaction.isGameComplete()){
+                if (!interaction.isGameComplete()){
                 	unsetGame();
                 	setRoomComplete();
                 }
@@ -134,12 +140,18 @@ public class Game extends Application {
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
-        GameBoardGen ga = new GameBoardGen(10,10,3,newPlayer);
-		g = new GameBoard(10,10);
-		g.addOuterWall();
-		for (Coordinates c: ga.getPath()){
-			g.addObj(new Wall(), c);
-		}
+        //GameBoardGen ga = new GameBoardGen(10,10,3,newPlayer);
+		g = new GameBoard(15,10);
+		// put objects on the gameboard
+        g.addObj(new Box(), 7, 5);
+        g.addObj(new Box(), 7, 3);
+        g.addObj(new Box(), 5, 5);
+        g.addObj(new Goal(), 13, 8);
+        g.addObj(new Goal(), 13, 1);
+        g.addObj(new Goal(), 1, 8);
+        
+        // Build walls
+        g.addOuterWall();  
 		g.addObj(newPlayer, 2, 2);
 		
 		// Attach keypress
@@ -178,18 +190,28 @@ public class Game extends Application {
     }
     
     private Scene showRoomCompleteScene() {
+    	// Setup layout
+    	BorderPane borderpane = new BorderPane();
+
+    	VBox vbox = new VBox();
+    	vbox.setAlignment(Pos.CENTER);
+
+    	borderpane.setCenter(vbox);
+    	
     	Text t = new Text();
-    	t.setText("\n\n\n        Room Completed. \n        Congratulations.");
+    	t.setText("Room Completed.\nCongratulations.");
     	t.setFont(gameFont);
     	t.setFill(Color.RED);
     	
     	Text pressNext = new Text();
-    	pressNext.setText("\n\n\n\n\n\n\n\n    Press any key to continue");
+    	pressNext.setText("\n\n\n\n\n\nPress any key to continue");
     	pressNext.setFont(gameFont);
     	pressNext.setFill(Color.WHITE);
-    	Group completedRoom = new Group(t, pressNext);
     	
-    	Scene scene = new Scene(completedRoom, W, H, Color.BLACK);
+    	vbox.getChildren().add(t);
+    	vbox.getChildren().add(pressNext);
+    	
+    	Scene scene = new Scene(borderpane, W, H, Color.BLACK);
     	scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
     		@Override
     		public void handle(KeyEvent event) {
@@ -197,6 +219,39 @@ public class Game extends Application {
     			setNewGame();
     		}
     	});
+    	return scene;
+    }
+    
+    private Scene showTitleScreenScene() {
+    	// Setup layout
+    	BorderPane borderpane = new BorderPane();
+
+    	VBox vbox = new VBox();
+    	vbox.setAlignment(Pos.CENTER);
+
+    	borderpane.setCenter(vbox);
+    	
+    	String titleString = "images/title-no-bg.png";
+    	ImageView title = getImageView(titleString);
+    	
+    	Text pressNext = new Text();
+    	pressNext.setText("\n\n\n\n\n\nPress space bar to start");
+    	pressNext.setFont(gameFont);
+    	pressNext.setFill(Color.WHITE);
+    	
+    	vbox.getChildren().add(title);
+    	vbox.getChildren().add(pressNext);
+    	
+    	Scene scene = new Scene(borderpane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			if (event.getCode() == KeyCode.SPACE) {
+    				setNewGame();
+    			}
+    		}
+    	});
+    	
     	return scene;
     }
     
@@ -227,4 +282,38 @@ public class Game extends Application {
 	private void unsetRoomComplete() {
 		scene_roomcomplete = false;
 	}
+	
+	private String getFileName(String rpath) {
+		return new File(rpath).toURI().toString();
+	}
+	
+	private ImageView getImageView(String rpath) {
+		javafx.scene.image.Image image = new javafx.scene.image.Image(getFileName(rpath));
+		ImageView imageView = new ImageView(image);
+		return imageView;
+		
+	}
+	
+/*	private BorderPane decorateGameBorder(Node n){
+		String musicOnString = "images/music-button-on.png";
+		String musicOffString = "images/music-button-off.png";
+		ImageView musicOn = getImageView(musicOnString);
+		ImageView musicOff = getImageView(musicOffString);
+		
+		BorderPane borderpane = new BorderPane();
+		borderpane.setCenter(n);
+		
+		
+		// Music button
+		HBox topButtons= new HBox();
+		topButtons.setStyle("-fx-background-color: #000000;");
+		ToggleButton musicButton = new ToggleButton("", musicOn);
+		topButtons.setAlignment(Pos.CENTER_RIGHT);
+		topButtons.getChildren().add(musicButton);
+		
+		borderpane.setTop(topButtons);
+		
+		return borderpane;
+	}
+*/
 }
