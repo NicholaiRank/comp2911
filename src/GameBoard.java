@@ -11,6 +11,15 @@ public class GameBoard {
 	private int y;
 	private int x;
 	
+	
+	final int PLAYER = 0;
+	final int BG = 1;
+	final int CRATE = 2;
+	final int GOAL = 3;
+	final int WALL = 4;
+	
+	
+	
 	public GameBoard(int x,int y){
 		this.matrix = new ArrayList<ArrayList<GameBoardObject>>(y);
 		for (int i = 0; i < y; ++i) {
@@ -152,6 +161,7 @@ public class GameBoard {
 	/**
 	 * Builds a graphic representation of the board based on the matrix 
 	 * @param tileSet A TileSet containing the desired set of tiles that are to be displayed
+	 * @return Returns a TilePane with the desired tiles in the correct places
 	 */
 	public TilePane buildGraphics(TileSet tileSet){
 		final int PLAYER = 0;

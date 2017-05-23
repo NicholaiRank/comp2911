@@ -21,7 +21,10 @@ public class KeyPress{
     	this.player = player;
     }
     
-    
+    /**
+     * Sets whichever keys that have been pressed to True
+     * @param keypress Key code for the corresponding key pressed
+     */
     public void setFlag(KeyCode keypress){
     	switch (keypress) {
         case UP: goNorth = true; break;                 
@@ -52,6 +55,10 @@ public class KeyPress{
     	}	
     }
     
+    /**
+     * Resets all keys to False (i.e. nothing is being pressed)
+     * @param keypress Key code for the corresponding key pressed
+     */
     public void resetFlags(KeyCode keypress){
     	switch (keypress) {
         case UP:    goNorth = false; northPressed = false; break;
@@ -66,6 +73,9 @@ public class KeyPress{
     	}
     }
     
+    /**
+     * Makes changes to the gameboard according to what keys have been pressed 
+     */
     public void handleInput(){
 
         int dx = 0, dy = 0;
