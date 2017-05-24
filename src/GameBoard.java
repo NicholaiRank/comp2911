@@ -246,4 +246,16 @@ public class GameBoard {
 		
 		return retString;
 	}
+	
+	public GameBoard copyBoard() {
+		GameBoard copy = new GameBoard(this.x, this.y);
+		for (int i = 0; i < this.x; i++) {
+			for (int j = 0; j < this.y; j++) {
+				if (this.getObjectAt(i, j) != null) {
+					copy.addObj((GameBoardObject) this.getObjectAt(i, j), i, j);
+				}
+			}
+		}
+		return copy;
+	}
 }
