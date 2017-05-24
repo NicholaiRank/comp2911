@@ -9,22 +9,19 @@ public class KeyPress{
     private GameBoard g;	// This should be the gameboard that it is associated with
     private Interaction i;
     private Player player;	// This should be the player that is associated with this keypress
+	private GameBoard original;
 
-    boolean running, goNorth, goSouth, goEast, goWest, grounded, northPressed, southPressed, eastPressed, westPressed;
-
- 
+    boolean success, goNorth, goSouth, goEast, goWest, grounded, northPressed, southPressed, eastPressed, westPressed;
 
 
     public KeyPress(GameBoard gameboard, Player player){
     	this.g = gameboard;
     	this.i = new Interaction(this.g);
     	this.player = player;
+		this.original = copyBoard(gameboard);
     }
     
-    /**
-     * Sets whichever keys that have been pressed to True
-     * @param keypress Key code for the corresponding key pressed
-     */
+    
     public void setFlag(KeyCode keypress){
     	switch (keypress) {
         case UP: goNorth = true; break;                 
@@ -34,32 +31,15 @@ public class KeyPress{
         case W: goNorth = true; break;
         case S: goSouth = true; break;
         case A: goWest = true; break;
-        case D: goEast = true; break;
-        case SHIFT: running = true; break;
+        case D: goEast = true; break; 
         case R: {
-        	for (int i = 0; i < 15; i++) {
-        		for (int j = 0; j < 10; j++) {
-        			g.removeObj(i, j);
-        		}
-        	}
-        	g.addOuterWall();
-        	g.addObj(player, 2, 2);	// Not sure if should add new player or maintain a Player in this class
-            g.addObj(new Box(), 7, 5);
-            g.addObj(new Box(), 7, 3);
-            g.addObj(new Box(), 5, 5);
-            g.addObj(new Goal(), 13, 8);
-            g.addObj(new Goal(), 13, 1);
-            g.addObj(new Goal(), 1, 8);
-            System.out.println(g.toString());
-        	}
+			this.g = copyBoard(this.original);
+			break;	
     	}	
     }
     
-    /**
-     * Resets all keys to False (i.e. nothing is being pressed)
-     * @param keypress Key code for the corresponding key pressed
-     */
     public void resetFlags(KeyCode keypress){
+        success = false;
     	switch (keypress) {
         case UP:    goNorth = false; northPressed = false; break;
         case DOWN:  goSouth = false; southPressed = false; break;
@@ -69,26 +49,20 @@ public class KeyPress{
         case S:  goSouth = false; southPressed = false; break;
         case A:  goWest  = false; westPressed = false; break;
         case D: goEast  = false; eastPressed = false; break;
-        case SHIFT: running = false; break;
+
+        //case SHIFT: running = false; break;
     	}
     }
     
-    /**
-     * Makes changes to the gameboard according to what keys have been pressed 
-     */
     public void handleInput(){
 
-
-
         if (goNorth) {
-        	
         	if (northPressed == false) {
         		northPressed = true;
         		i.moveUp(player);                		
         	}
         }
         if (goSouth) {
-        	
           	if (southPressed == false) {
         		southPressed = true;
         		i.moveDown(player);
@@ -96,20 +70,17 @@ public class KeyPress{
         	}                	                	
         }
         if (goEast) {
-        	
           	if (eastPressed == false) {
         		eastPressed = true;
         		i.moveRight(player);
         	}
         }
         if (goWest) {
-        	
           	if (westPressed == false) {
         		westPressed = true;
         		i.moveLeft(player);
         	}
-        }
-        
+        } 
     }
     
 }

@@ -23,6 +23,7 @@ public class GameBoardGen{
 
 	private ArrayList<ArrayList<Coordinates>> addRandomObjs(int numBoxes, Player p){
 		//probably should add capability to have multiple players
+
 		board.addOuterWall();
 		board.addObj(p, getRandomCoords());
 		ArrayList<Coordinates> goals = new ArrayList<Coordinates>();
@@ -148,12 +149,15 @@ public class GameBoardGen{
 	}
 
 	
-	private ArrayList<Coordinates> puzzleGen(Coordinates player, ArrayList<Coordinates> boxes, ArrayList<Coordinates> goals)
+	private ArrayList<Coordinates> puzzleGen(Coordinates player, ArrayList<Coordinates> goals, ArrayList<Coordinates> boxes)
 	{
+		//was initially passed in wrongly
 		//takes in a gameboard.
 		//need to have a valid path from player to box to goal.
 		//two a star searches and combine the final result
 		//combined path will be a complete list of untouchable coordinates where the walls cannot be placed
+
+		//randomly generate whether path will be side-up or up-side for the harder cases.
 
 		Queue<Coordinates> q = new LinkedList<Coordinates>();
 		q.addAll(goals);
@@ -164,9 +168,143 @@ public class GameBoardGen{
 
 		for(Coordinates box: boxes)
 		{
-			path = getPath(player,box);
-			nextPath = getPath(box,q.poll());
-			path.addAll(nextPath);
+			
+			Coordinates goal = q.poll();
+
+			if(box.getX() == goal.getX() && box.getY() < goal.getY())
+			{
+				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
+
+				for(int i=box.getY();i<goal.getY();i++)
+				{
+					Coordinates added = new Coordinates(box.getX(),i);
+					path.add(added);
+
+				}
+
+			}
+
+			else if(box.getX() == goal.getX() && box.getY() > goal.getY())
+			{					
+				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				for(int i=goal.getY();i<box.getY();i++)
+				{
+					path.add(new Coordinates(goal.getX(),i));
+				}
+			}
+
+
+			else if(box.getX() > goal.getX() && box.getY() == goal.getY())
+			{
+				//goal is to the left of box.
+				//come in from the box's right side + clear path to goal
+				path = getPath(player,new Coordinates(box.getX()+1,box.getY()));
+				for(int i=goal.getX();i<box.getX();i++)
+				{
+					path.add(new Coordinates(i,goal.getY()));
+				}
+			}
+
+
+			else if(box.getX() < goal.getX() && box.getY() == goal.getY())
+			{
+
+				//goal is to the right of the box.
+				//come in from left of box and clear path to goal
+				path = getPath(player,new Coordinates(box.getX()-1,box.getY()));
+				for(int i=box.getX();i<goal.getX();i++)
+				{
+					path.add(new Coordinates(i,box.getY()));
+				}
+			}
+
+
+			//harder paths to goals: top left, top right,bottom left, bottom right
+
+			else if(box.getX() > goal.getX() && box.getY() > goal.getY())  
+			{
+				//goal is top left
+				String direction= "TL";				
+				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				Coordinates added = new Coordinates(box.getX()+1,box.getY());
+				path.add(added);
+				added = new Coordinates(box.getX()+1,box.getY()-1);
+				path.add(added);
+				
+				nextPath = getSidePath(box,goal,direction);
+				path.addAll(nextPath);
+				nextPath.clear();	
+			}
+
+
+			else if(box.getX() < goal.getX() && box.getY() > goal.getY())  
+			{
+				//goal is top right
+				//gaining accessing to box from left and bottom
+				
+				String direction= "TR";
+
+				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				Coordinates added = new Coordinates(box.getX()-1,box.getY());
+				path.add(added);
+				//System.out.println("added: "+added.getX()+","+added.getY());
+				added = new Coordinates(box.getX()-1,box.getY()+1);
+				//System.out.println("added: "+added.getX()+","+added.getY());
+				nextPath = getSidePath(box,goal,direction);
+				path.addAll(nextPath);
+				nextPath.clear();
+				
+			}
+
+			else if(box.getX() > goal.getX() && box.getY() < goal.getY())  
+			{
+				//bottom left
+				//gaining accessing to box from right and top(yes)
+
+				String direction= "BL";
+				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
+
+
+				Coordinates added = new Coordinates(box.getX()+1,box.getY());
+				path.add(added);
+				// System.out.println("added: "+added.getX()+","+added.getY());
+				added = new Coordinates(box.getX()+1,box.getY()-1);
+				// System.out.println("added: "+added.getX()+","+added.getY());
+
+
+				nextPath = getSidePath(box,goal,direction);
+				path.addAll(nextPath);
+				nextPath.clear();
+			}
+
+			else if(box.getX() < goal.getX() && box.getY() < goal.getY())  
+			{
+				//bottom right
+				//gaining accessing to box from left and top yes
+				// System.out.println("reached here box is bottom right ||||||||");
+				// System.out.println("box: "+box.getX()+","+box.getY());
+				// System.out.println("box: "+goal.getX()+","+goal.getY());
+
+				String direction= "BR";
+				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
+
+				Coordinates added = new Coordinates(box.getX()-1,box.getY());
+				path.add(added);
+				// System.out.println("added: "+added.getX()+","+added.getY());
+				added = new Coordinates(box.getX()-1,box.getY()-1);
+				// System.out.println("added: "+added.getX()+","+added.getY());
+					
+				nextPath = getSidePath(box,goal,direction);
+				path.addAll(nextPath);
+				nextPath.clear();				
+			}
+
+			else
+			{
+				//here just in case never quite reaches here
+				path = getPath(player,box);
+			}
+
 			combinedPath.addAll(path);
 		}
 
@@ -178,20 +316,15 @@ public class GameBoardGen{
 	{
 		ArrayList<Coordinates> path = new ArrayList<Coordinates>();
 		path.add(start);
-		Comparator<Coordinates> comparator = new DistanceToGoalComparator();
-		PriorityQueue<Coordinates> q =  new PriorityQueue<Coordinates>(10, comparator); 
 
 		ArrayList<Coordinates> adjacentAvailable = new ArrayList<Coordinates>();
 		Coordinates current = start;
 
-		while(current.getX()!=finish.getX() && current.getY()!=finish.getY()) //mightnt be correct condition
+		while (checkIfSame(current,finish)!=true) 
 		{
-			//taking the best heuristic at each stage
-			adjacentAvailable.addAll(getadjacent(current,finish));
-			q.addAll(adjacentAvailable);
-			current = q.poll();
+			current = getClosest(current,finish,path);
+			//System.out.println("just added: " +current.getX() + "," +current.getY());
 			path.add(current);
-			//q.clear();
 		}
 
 		return path;
@@ -205,52 +338,213 @@ public class GameBoardGen{
 		return value;
 	}
 
-	private ArrayList<Coordinates> getadjacent(Coordinates current,Coordinates goal)
+	private Coordinates getClosest(Coordinates current,Coordinates goal,ArrayList<Coordinates> path)
 	{
 
 		//add in the adjacents coordinates with their heuristic distances to goal
+		Comparator<Coordinates> comparator = new DistanceToGoalComparator();
+
+		PriorityQueue<Coordinates> q =  new PriorityQueue<Coordinates>(10, comparator); 
 
 		ArrayList<Coordinates> adjacent = new ArrayList<Coordinates>();
 		int value =0;
 
 		Coordinates check = new Coordinates(current.getX()-1,current.getY());
-		if(board.getObjectAt(check)==null)
-		{
-			value = getHeuristicDistance(check,goal);
-			check.setCost(value);
-			adjacent.add(check);
 
+		if(board.getObjectAt(check)==null || board.getObjectAt(check) instanceof Goal || board.getObjectAt(check) instanceof Player || checkIfSame(check,goal)==true)
+		{
+			if(!path.contains(check))
+			{
+				value = getHeuristicDistance(check,goal);
+				check.setCost(value);
+				q.add(check);
+			}
 
 		}
 
 		check = new Coordinates(current.getX()+1,current.getY());
-		if(board.getObjectAt(check)==null)
+
+
+		if(board.getObjectAt(check)==null || board.getObjectAt(check) instanceof Goal || board.getObjectAt(check) instanceof Player ||checkIfSame(check,goal)==true)
 		{
-			value = getHeuristicDistance(check,goal);
-			check.setCost(value);
-			adjacent.add(check);
+			if(!path.contains(check))
+			{
+				value = getHeuristicDistance(check,goal);
+				check.setCost(value);
+				q.add(check);
+			}
 		}
+
 
 		check = new Coordinates(current.getX(),current.getY()-1);
-		if(board.getObjectAt(check)==null)
+		
+		if(board.getObjectAt(check)==null || board.getObjectAt(check) instanceof Goal || board.getObjectAt(check) instanceof Player || checkIfSame(check,goal)==true)
 		{
-			value = getHeuristicDistance(check,goal);
-			check.setCost(value);
-			adjacent.add(check);
+			if(!path.contains(check))
+			{
+				value = getHeuristicDistance(check,goal);
+				check.setCost(value);
+				q.add(check);
+			}
 		}
-
 
 		check = new Coordinates(current.getX(),current.getY()+1);
-		if(board.getObjectAt(check)==null)
+		
+		if(board.getObjectAt(check)==null || board.getObjectAt(check) instanceof Goal || board.getObjectAt(check) instanceof Player || checkIfSame(check,goal)==true)
 		{
-			value = getHeuristicDistance(check,goal);
-			check.setCost(value);
-			adjacent.add(check);
+			if(!path.contains(check))
+			{
+				value = getHeuristicDistance(check,goal);
+				check.setCost(value);
+				q.add(check);
+			}
 		}
 
-		return adjacent;
+		if(q.isEmpty())
+		{
+			//q.add(new Coordinates(5,5)); //might be issue here
+			System.out.println("empty queue EXITING"); 
+			System.exit(0);
+		}
 
+		Coordinates next = q.poll();
+
+		q.clear();
+		return next;
 	}
 
 
+	private ArrayList<Coordinates> getSidePath(Coordinates box,Coordinates goal,String direction)
+	{
+		ArrayList<Coordinates> path = new ArrayList<Coordinates>();	
+
+		if(direction.equals("TR"))
+		{
+
+			for(int i = box.getX();i<=goal.getX(); i++)
+			{
+				Coordinates added = new Coordinates(i,box.getY());
+				path.add(added);
+
+			}
+			//clear 2 directly below
+			int last = path.size() - 1;
+			Coordinates c = path.get(last);
+			path.add(new Coordinates(c.getX(),c.getY()+1)); 
+			path.add(new Coordinates(c.getX()-1,c.getY()+1));	
+
+
+			for(int i = goal.getY();i<= c.getY(); i++)
+			{
+				Coordinates added = new Coordinates(c.getX(),i);
+				path.add(added);
+
+			}	
+			
+		}
+
+		else if(direction.equals("TL"))
+		{
+			
+			for(int i = goal.getX();i<=box.getX(); i++)
+			{
+				Coordinates added = new Coordinates(i,box.getY());
+				path.add(added);
+			}
+
+			// //clear 2 directly below
+			Coordinates c = path.get(0);
+			Coordinates curr = new Coordinates(c.getX(),c.getY()+1);
+			path.add(curr); 
+			curr = new Coordinates(c.getX()+1,c.getY()+1); 
+			path.add(curr);	
+
+
+			for(int i = goal.getY();i<= c.getY(); i++)
+			{
+				Coordinates added = new Coordinates(c.getX(),i);
+				path.add(added);
+			}	
+		}
+
+
+
+		else if(direction.equals("BR"))
+		{
+			for(int i = box.getX();i<=goal.getX(); i++)
+			{
+				Coordinates added = new Coordinates(i,box.getY());
+				path.add(added);
+			}
+
+			Coordinates c = path.get(path.size()-1);
+			Coordinates curr = new Coordinates(c.getX(),c.getY()-1);
+			path.add(curr); 
+			curr = new Coordinates(c.getX()-1,c.getY()-1); 
+			path.add(curr);	
+
+			for(int i = c.getY();i<= goal.getY(); i++)
+			{
+				Coordinates added = new Coordinates(c.getX(),i);
+				path.add(added);
+			}	
+
+		}
+
+		else if(direction.equals("BL"))
+		{
+			for(int i = goal.getX();i<=box.getX(); i++)
+			{
+				Coordinates added = new Coordinates(i,box.getY());
+				path.add(added);
+			}
+
+			// clear from path(0) in this case
+			Coordinates c = path.get(0);
+			Coordinates curr = new Coordinates(c.getX(),c.getY()-1);
+			path.add(curr); 
+			curr = new Coordinates(c.getX()+1,c.getY()-1); 
+			path.add(curr);	
+
+			//downwards path
+
+			for(int i = c.getY();i<= goal.getY(); i++)
+			{
+				Coordinates added = new Coordinates(c.getX(),i);
+				path.add(added);
+			}	
+
+		}
+
+		else
+		{
+			//System.out.println("reaches here path empty");
+			path.add(new Coordinates(1,1));
+			return path; //path is empty
+		}
+
+		path.add(new Coordinates(1,1)); //arbitrary point for safety checks-> remove later
+
+		return path;
+	}
+
+
+	boolean checkIfSame(Coordinates start,Coordinates finish)
+	{
+		if(start.getX() == finish.getX() && start.getY() == finish.getY())
+		{
+			return true;
+		}
+
+		else
+		{
+			return false;
+		}
+		
+	}
+
 }
+
+
+
+
