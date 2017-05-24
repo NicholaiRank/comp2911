@@ -78,17 +78,17 @@ public class KeyPress{
      */
     public void handleInput(){
 
-        int dx = 0, dy = 0;
+
 
         if (goNorth) {
-        	dy += 1;
+        	
         	if (northPressed == false) {
         		northPressed = true;
         		i.moveUp(player);                		
         	}
         }
         if (goSouth) {
-        	dy -= 1;
+        	
           	if (southPressed == false) {
         		southPressed = true;
         		i.moveDown(player);
@@ -96,21 +96,20 @@ public class KeyPress{
         	}                	                	
         }
         if (goEast) {
-        	dx += 3;
+        	
           	if (eastPressed == false) {
         		eastPressed = true;
         		i.moveRight(player);
         	}
         }
         if (goWest) {
-        	dx -= 3;
+        	
           	if (westPressed == false) {
         		westPressed = true;
         		i.moveLeft(player);
         	}
         }
-        if (running) { dx *= 2; dy *= 2; }
-        System.out.println(g.toString());
+        
     }
     
 }

@@ -182,6 +182,8 @@ public class GameBoard {
 		tilePane.setPrefColumns(x);
 		tilePane.setPrefRows(y);
 		tilePane.setTileAlignment(Pos.TOP_RIGHT);
+		tilePane.setMaxWidth(x * 32);
+		tilePane.setMaxHeight(y * 32);
 		
 		for (ArrayList<GameBoardObject> array: matrix) {
 			for (GameBoardObject gameObject: array) {

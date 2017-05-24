@@ -114,16 +114,16 @@ public class Game extends Application {
 
     	Group dungeon = new Group(tilePane);
         Scene scene = new Scene(dungeon, W, H, Color.BLACK);
- 
+        if (interaction.isGameComplete()){
+        	unsetGame();
+        	setRoomComplete();
+        }
         // Handle scene events
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
-                if (!interaction.isGameComplete()){
-                	unsetGame();
-                	setRoomComplete();
-                }
+                
             }
         });
 
@@ -164,7 +164,7 @@ public class Game extends Application {
         
         // Make the scene
         Group dungeon = new Group(tilePane);
-        Scene scene = new Scene(dungeon, W, H, Color.BLACK);
+        Scene scene = new Scene(dungeon, W, H, Color.BLACK);   
  
         // Handle scene events
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -294,14 +294,16 @@ public class Game extends Application {
 		
 	}
 	
-/*	private BorderPane decorateGameBorder(Node n){
+private BorderPane decorateGameBorder(Node n){
 		String musicOnString = "images/music-button-on.png";
 		String musicOffString = "images/music-button-off.png";
 		ImageView musicOn = getImageView(musicOnString);
 		ImageView musicOff = getImageView(musicOffString);
 		
 		BorderPane borderpane = new BorderPane();
-		borderpane.setCenter(n);
+		VBox box = new VBox();
+		box.getChildren().add(n);
+		borderpane.setCenter(box);
 		
 		
 		// Music button
@@ -315,5 +317,5 @@ public class Game extends Application {
 		
 		return borderpane;
 	}
-*/
+
 }
