@@ -140,19 +140,9 @@ public class Game extends Application {
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
-        //GameBoardGen ga = new GameBoardGen(10,10,3,newPlayer);
-		g = new GameBoard(15,10);
-		// put objects on the gameboard
-        g.addObj(new Box(), 7, 5);
-        g.addObj(new Box(), 7, 3);
-        g.addObj(new Box(), 5, 5);
-        g.addObj(new Goal(), 13, 8);
-        g.addObj(new Goal(), 13, 1);
-        g.addObj(new Goal(), 1, 8);
-        
-        // Build walls
-        g.addOuterWall();  
-		g.addObj(newPlayer, 2, 2);
+        GameBoardGen ga = new GameBoardGen(20,15,5,newPlayer);
+		g = ga.getBoard();
+		
 		
 		// Attach keypress
         keypress = new KeyPress(g,newPlayer);
@@ -165,14 +155,14 @@ public class Game extends Application {
         // Make the scene
         Group dungeon = new Group(tilePane);
         Scene scene = new Scene(dungeon, W, H, Color.BLACK);   
- 
+        unsetNewGame();
+        setGame();
         // Handle scene events
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 keypress.setFlag(event.getCode());
-                unsetNewGame();
-                setGame();
+                
                 
                 
             }

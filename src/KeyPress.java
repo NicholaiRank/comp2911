@@ -18,7 +18,7 @@ public class KeyPress{
     	this.g = gameboard;
     	this.i = new Interaction(this.g);
     	this.player = player;
-		this.original = copyBoard(gameboard);
+		this.original = this.g.copyBoard();
     }
     
     
@@ -33,9 +33,10 @@ public class KeyPress{
         case A: goWest = true; break;
         case D: goEast = true; break; 
         case R: {
-			this.g = copyBoard(this.original);
+			this.g = this.original.copyBoard();
 			break;	
-    	}	
+    		}
+    	}
     }
     
     public void resetFlags(KeyCode keypress){

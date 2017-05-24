@@ -1,6 +1,7 @@
 import java.util.*;
 
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -182,18 +183,24 @@ public class GameBoard {
 		tilePane.setPrefColumns(x);
 		tilePane.setPrefRows(y);
 		tilePane.setTileAlignment(Pos.TOP_RIGHT);
-		tilePane.setMaxWidth(x * 32);
-		tilePane.setMaxHeight(y * 32);
+		tilePane.setMaxWidth(x * 48);
+		tilePane.setMaxHeight(y * 48);
 		
 		for (ArrayList<GameBoardObject> array: matrix) {
 			for (GameBoardObject gameObject: array) {
 				try{
 					char symbol = gameObject.getByteRep();
+//					class cl = gameObject.
 					
 					switch (symbol) {
 						case 'P': {
+							Node bg = new ImageView(bgImage);
 							Node hero = new ImageView(heroImage);
-							tilePane.getChildren().add(hero);
+							Group heroG = new Group();
+							heroG.getChildren().add(bg);
+							heroG.getChildren().add(hero);
+							tilePane.getChildren().add(heroG);
+							
 							break;
 						}
 						case ' ': {
