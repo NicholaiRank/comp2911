@@ -14,7 +14,7 @@ public class Interaction {
 	public boolean isGameComplete(){
 		for (int i = 0; i < board.getX(); ++i) {
 			for (int j = 0; j < board.getY(); j++){
-				if (board.getObjectAt(i, j) == Goal.class){
+				if ((board.getObjectAt(i, j) != null) && (board.getObjectAt(i, j).getClass() == Goal.class)){
 					return false;
 				}
 			}

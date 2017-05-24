@@ -11,7 +11,7 @@ public class TileSet {
 	private final int GOAL = 3;
 	private final int WALL = 4;
 
-	ArrayList<Image> tiles;
+	private ArrayList<Image> tiles;
 	
 	public TileSet(){
 		ArrayList<Image> tiles = new ArrayList<Image>(5);
