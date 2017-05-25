@@ -10,18 +10,23 @@ public class KeyPress{
     private Interaction i;
     private Player player;	// This should be the player that is associated with this keypress
 	private GameBoard original;
-
+	private TileSet tileset;
+	
     boolean success, goNorth, goSouth, goEast, goWest, grounded, northPressed, southPressed, eastPressed, westPressed;
 
-
-    public KeyPress(GameBoard gameboard, Player player){
+    
+    public KeyPress(GameBoard gameboard, Player player, TileSet tileset){
     	this.g = gameboard;
     	this.i = new Interaction(this.g);
     	this.player = player;
 		this.original = this.g.copyBoard();
+		this.tileset = tileset;
     }
     
-    
+    /**
+     * Determines what key has been pressed
+     * @param keypress Valid keycode for the key that has been pressed. 
+     */
     public void setFlag(KeyCode keypress){
     	switch (keypress) {
         case UP: goNorth = true; break;                 
@@ -39,6 +44,10 @@ public class KeyPress{
     	}
     }
     
+    /**
+     * Unsets the key flag. (i.e. This key is no longer is being pressed)
+     * @param keypress Valid keycode for the key that is no longer being pressed.
+     */
     public void resetFlags(KeyCode keypress){
         success = false;
     	switch (keypress) {
@@ -55,31 +64,37 @@ public class KeyPress{
     	}
     }
     
+    /**
+     * Makes changes as needed to the gameboard and/or tileSet
+     */
     public void handleInput(){
 
         if (goNorth) {
         	if (northPressed == false) {
         		northPressed = true;
-        		i.moveUp(player);                		
+        		i.moveUp(player);      
+        		tileset.setPlayerUp();
         	}
         }
         if (goSouth) {
           	if (southPressed == false) {
         		southPressed = true;
         		i.moveDown(player);
-        		
+        		tileset.setPlayerDown();
         	}                	                	
         }
         if (goEast) {
           	if (eastPressed == false) {
         		eastPressed = true;
         		i.moveRight(player);
+        		tileset.setPlayerRight();
         	}
         }
         if (goWest) {
           	if (westPressed == false) {
         		westPressed = true;
         		i.moveLeft(player);
+        		tileset.setPlayerLeft();
         	}
         } 
     }
