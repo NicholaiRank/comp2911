@@ -17,6 +17,9 @@ public class Interaction {
 				if ((board.getObjectAt(i, j) != null) && (board.getObjectAt(i, j).getClass() == Goal.class)){
 					return false;
 				}
+				else if ((board.getObjectAt(i, j) != null && board.getObjectAt(i, j).getClass() == Player.class)) {
+					if (((GameBoardObject) board.getObjectAt(i, j)).isOnGoal()) return false;
+				}
 			}
 		}
 		return true;
@@ -81,6 +84,18 @@ public class Interaction {
 		if (nextToMe == null){
 			if (canPlaceObj(desired)){
 				board.moveObj(player,desired);
+				if (player.isOnGoal() == true) {
+					player.setGoal(false);
+					board.addObj(new Goal(), c);
+				}
+				
+				return true;
+			}
+		} else if (nextToMe.getClass() == Goal.class) {
+			if (canPlaceObj(desired)){
+				board.moveObj(player, desired);
+				if (player.isOnGoal() == true) board.addObj(new Goal(), c);
+				player.setGoal(true);
 				return true;
 			}
 		} else if (nextToMe.getClass() == Box.class){
@@ -89,9 +104,18 @@ public class Interaction {
 			if (canPlaceObj(nextToDesired)){
 				if (board.getObjectAt(nextToDesired) == null || board.getObjectAt(nextToDesired).getClass() != Box.class) {
 					//moves box first
-					moveBox((Box) nextToMe,nextToDesired);
+					moveBox((Box) nextToMe,nextToDesired, desired);
 					//then moves player to boxe's original position
+					boolean ontoGoal = false;
+					if (board.getObjectAt(desired) != null && board.getObjectAt(desired).getClass() == Goal.class) {
+						ontoGoal = true;
+					}
 					board.moveObj(player,desired);
+					if (player.isOnGoal() == true) {
+						board.addObj(new Goal(), c);
+					}
+					if (ontoGoal) player.setGoal(true);
+					else player.setGoal(false);
 					return true;
 				}
 			}
@@ -110,7 +134,7 @@ public class Interaction {
 	private boolean canPlaceObj(int x, int y){
 		Object obj = board.getObjectAt(x,y);
 		
-		if (obj == null) return true;
+		if (obj == null) return true;		
 		if (obj.getClass() == Wall.class) return false;
 		
 		return true;
@@ -129,17 +153,27 @@ public class Interaction {
 	 * Moves a box (it's in the name)
 	 * @param b - The box to be moved (must be on board)
 	 * @param c - The new coordinates
+	 * @param start - The box's original coordinates
 	 * @pre canPlaceObj(c)
 	 */
-	private void moveBox(Box b, Coordinates c){		
+	private void moveBox(Box b, Coordinates c, Coordinates start){
+		
 		if (board.getObjectAt(c) != null) {
 			if (board.getObjectAt(c).getClass() == Goal.class){
 				//if it's a goal, the entire position is reset
 				board.moveObj(b, c);
-				board.removeObj(c);
+				if (b.isOnGoal() == true) {
+					board.addObj(new Goal(), start);
+				}
+				b.setGoal(true);
+
 			}
 		} else {
 			board.moveObj(b, c);
+			if (b.isOnGoal() == true) {
+				b.setGoal(false);
+				board.addObj(new Goal(), start);
+			}
 		}
 	}
 	

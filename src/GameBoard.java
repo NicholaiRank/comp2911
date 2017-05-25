@@ -278,4 +278,13 @@ public class GameBoard {
 			}
 		}	
 	}
+
+	public void clearGoals() {
+		for (int i = 0; i < this.x; i++) {
+			for (int j = 0; j < this.y; j++) {
+				if (this.getObjectAt(i, j) != null) ((GameBoardObject) this.getObjectAt(i, j)).setGoal(false);
+			}
+		}
+		
+	}
 }

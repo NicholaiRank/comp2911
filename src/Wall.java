@@ -6,4 +6,13 @@ public class Wall implements GameBoardObject{
 	public char getByteRep(){
 		return '#';
 	}
+
+	@Override
+	public boolean isOnGoal() {
+		return false;
+	}
+
+	@Override
+	public void setGoal(boolean set) {
+	}
 }

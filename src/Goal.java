@@ -6,4 +6,13 @@ public class Goal implements GameBoardObject{
 	public char getByteRep(){
 		return 'X';
 	}
+
+	@Override
+	public boolean isOnGoal() {
+		return false;
+	}
+
+	@Override
+	public void setGoal(boolean set) {		
+	}
 }

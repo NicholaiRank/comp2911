@@ -36,7 +36,7 @@ public class KeyPress{
         case D: goEast = true; break; 
         case R: {
 			g.swapBoard(original);
-
+			g.clearGoals();
     		}
     	}
     }
