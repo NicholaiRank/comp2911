@@ -170,6 +170,7 @@ public class GameBoard {
 		final int CRATE = 2;
 		final int GOAL = 3;
 		final int WALL = 4;
+		final int CRATE_GOAL = 9;
 		
 		ArrayList<Image> tiles = tileSet.getTileSet();
 
@@ -178,6 +179,7 @@ public class GameBoard {
 		javafx.scene.image.Image crateImage = tiles.get(CRATE);
 		javafx.scene.image.Image goalImage = tiles.get(GOAL);
 		javafx.scene.image.Image wallImage = tiles.get(WALL);
+		javafx.scene.image.Image crategoalImage = tiles.get(CRATE_GOAL);
 		
 		TilePane tilePane = new TilePane(); 
 		tilePane.setPrefColumns(x);
@@ -194,7 +196,9 @@ public class GameBoard {
 					
 					switch (symbol) {
 						case 'P': {
-							Node bg = new ImageView(bgImage);
+							Node bg;
+							if (gameObject.isOnGoal()) bg = new ImageView(goalImage);
+							else bg = new ImageView(bgImage);
 							Node hero = new ImageView(heroImage);
 							Group heroG = new Group();
 							heroG.getChildren().add(bg);
@@ -209,7 +213,9 @@ public class GameBoard {
 							break;
 						}
 						case 'B': {
-							Node crate = new ImageView(crateImage);
+							Node crate;
+							if (gameObject.isOnGoal()) crate = new ImageView(crategoalImage);
+							else crate = new ImageView(crateImage);
 							tilePane.getChildren().add(crate);
 							break;
 						}

@@ -18,6 +18,7 @@ public class TileSet {
 	private final int PLAYER_DOWN = 6;
 	private final int PLAYER_LEFT = 7;
 	private final int PLAYER_RIGHT = 8;
+	private final int CRATE_GOAL = 9;
 	
 
 	private ArrayList<Image> tiles;
@@ -35,6 +36,7 @@ public class TileSet {
 		String heroD_pathname = "images/test-hero-down.png";
 		String heroL_pathname = "images/test-hero-left.png";
 		String heroR_pathname = "images/test-hero-right.png";
+		String crategoal_pathname = "images/test-goalcrate.png";
 		
 		javafx.scene.image.Image hero_Image;
 		javafx.scene.image.Image bg_Image;
@@ -45,6 +47,8 @@ public class TileSet {
 		javafx.scene.image.Image heroD_Image;
 		javafx.scene.image.Image heroL_Image;
 		javafx.scene.image.Image heroR_Image;
+		javafx.scene.image.Image crategoal_Image;
+		
 		// Default image in case image doesn't load
 		File default_file = new File("images/default.png");
 		String default_local = default_file.toURI().toString();
@@ -130,6 +134,15 @@ public class TileSet {
 			heroR_Image = new javafx.scene.image.Image(default_local);
 		}	
 		
+		try
+		{
+			File crategoal_file = new File(crategoal_pathname);
+	    	String crategoal_local = crategoal_file.toURI().toString();
+	    	crategoal_Image = new javafx.scene.image.Image(crategoal_local, false);
+		} catch (NullPointerException ne) {
+			crategoal_Image = new javafx.scene.image.Image(default_local);
+		}	
+		
     	tiles.add(PLAYER, hero_Image);
     	tiles.add(BG, bg_Image);
     	tiles.add(CRATE, crate_Image);
@@ -139,6 +152,7 @@ public class TileSet {
     	tiles.add(PLAYER_DOWN, heroD_Image);
     	tiles.add(PLAYER_LEFT, heroL_Image);
     	tiles.add(PLAYER_RIGHT, heroR_Image);
+    	tiles.add(CRATE_GOAL, crategoal_Image);
     	
 		this.tiles = tiles;
 		
