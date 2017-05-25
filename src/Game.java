@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -46,13 +47,17 @@ public class Game extends Application {
     private Interaction interaction;
     private Scene scene;
     private int cursor;
+    private int room;
 
     
     private Font gameFont;
     
     /* SCENE FLAGS */
     private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
+    private boolean scene_settings, scene_pause;
+    private boolean stage_exit;
     private boolean stage_music;
+
     @Override
     public void start(Stage stage) throws Exception {
     	
@@ -62,6 +67,8 @@ public class Game extends Application {
     	unsetTitle();
     	unsetRoomComplete();
     	
+    	stage_exit = false;
+    	room = 0;
     	// Get tileset
     	tileset = new TileSet();
    	
@@ -85,17 +92,32 @@ public class Game extends Application {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+            	
             	// Play music
             	if (stage_music == true) player.play();
             	else player.stop();
             	if (scene_game == true) scene = showGameScene();
             	else if (scene_roomcomplete == true) scene = showRoomCompleteScene();
             	else if (scene_newgame == true) scene = showNewGameScene();
+            	else if (scene_settings == true) scene = showSettingsScene();
+            	else if (scene_pause == true) scene = showPauseScene();
+            	else if (scene_title == true) scene = showTitleScreenScene();
             	else scene = showTitleScreenScene();
 
                 stage.setScene(scene);
                 stage.setTitle("Wobquest");
                 stage.show();
+                
+                if (stage_exit) {
+            		super.stop();
+            		stage.close(); 
+            		try {
+						TimeUnit.SECONDS.sleep(1);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            	}
 
             };
             
@@ -129,7 +151,13 @@ public class Game extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                keypress.setFlag(event.getCode());
+            	if (event.getCode() == KeyCode.ESCAPE) {
+            		unsetGame(); 
+            		setPause();
+            	}
+            	else {
+            		keypress.setFlag(event.getCode());
+            	}
                 
             }
         });
@@ -168,9 +196,13 @@ public class Game extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                keypress.setFlag(event.getCode());
-                
-                
+            	if (event.getCode() == KeyCode.ESCAPE) {
+            		unsetGame(); 
+            		setPause();
+            	}
+            	else {
+            		keypress.setFlag(event.getCode());
+            	}
                 
             }
         });
@@ -234,7 +266,7 @@ public class Game extends Application {
     	
     	ArrayList<String> menuOptions = new ArrayList<String>();
     	menuOptions.add("Play");
-    	menuOptions.add("Options");
+    	menuOptions.add("Settings");
     	menuOptions.add("Quit Game");
     	VBox menu = createMenu(menuOptions);
     	
@@ -250,9 +282,9 @@ public class Game extends Application {
     			case DOWN: cursorDown(); break;
     			case ENTER: {
     					switch(cursor){
-    					case 0: setNewGame(); cursorReset(); break;
-    					case 1: cursorReset(); break;
-    					case 2: cursorReset(); break;
+    					case 0: unsetTitle(); setNewGame(); cursorReset(); break;
+    					case 1: unsetTitle(); setSettings(); cursorReset(); break;
+    					case 2: stage_exit = true; break;
     					}
     				}
     			
@@ -263,11 +295,83 @@ public class Game extends Application {
     	return scene;
     }
     
+    private Scene showSettingsScene(){
+    	BorderPane borderpane = new BorderPane();
+    	
+    	ArrayList<String> menuOption = new ArrayList<String>();
+    	menuOption.add("main menu");
+    	
+    	VBox options = optionsBox(menuOption);
+    	borderpane.setCenter(options);
+    	
+    	Scene scene = new Scene(borderpane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			switch(event.getCode()){
+    			case UP: cursorUp(); break;
+    			case DOWN: cursorDown(); break;
+    			case ENTER: {
+    					switch(cursor){
+    					case 0: {
+    							// Toggle music
+    							if (stage_music) unsetMusic();
+    							else setMusic();
+    							break;
+    						}
+    					case 1: unsetSettings(); setTitle(); cursorReset(); break;
+
+    					}
+    				}
+    			
+    			}
+    		}
+    	});
+    	return scene;
+    	
+    }
+    private Scene showPauseScene(){
+    	BorderPane borderpane = new BorderPane();
+    	ArrayList<String> menuOption = new ArrayList<String>();
+    	menuOption.add("return to game");
+    	menuOption.add("main menu");
+    	
+    	VBox options = optionsBox(menuOption);
+    	borderpane.setCenter(options);
+    	
+    	Scene scene = new Scene(borderpane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			switch(event.getCode()){
+    			case UP: cursorUp(); break;
+    			case DOWN: cursorDown(); break;
+    			case ENTER: {
+    					switch(cursor){
+    					case 0: {
+    							// Toggle music
+    							if (stage_music) unsetMusic();
+    							else setMusic();
+    							break;
+    						}
+    					case 1: unsetSettings(); setGame(); cursorReset(); break;
+    					case 2: unsetPause(); setTitle(); cursorReset(); break;
+
+    					}
+    				}
+    			
+    			}
+    		}
+    	});
+	
+    	return scene;
+    }
     /****************************************
      * SET/UNSET SCENE FLAG METHODS
      ***************************************/
 	private void setNewGame() {
 		scene_newgame = true;
+		room++;
 	}
 	private void unsetNewGame() {
 		scene_newgame = false;
@@ -280,6 +384,7 @@ public class Game extends Application {
 	}
 	private void setTitle() {
 		scene_title = true;
+		room = 0;
 	}
 	private void unsetTitle() {
 		scene_title = false;
@@ -289,6 +394,22 @@ public class Game extends Application {
 	}
 	private void unsetRoomComplete() {
 		scene_roomcomplete = false;
+	}
+	
+	private void setSettings() {
+		scene_settings = true;
+	}
+	
+	private void unsetSettings() {
+		scene_settings = false;
+	}
+	
+	private void setPause() {
+		scene_pause = true;
+	}
+	
+	private void unsetPause() {
+		scene_pause = false;
 	}
 	
 	private void setMusic() {
@@ -310,10 +431,6 @@ public class Game extends Application {
 	}
 	
 	private BorderPane decorateGameBorder(Node n){
-		String musicOnString = "images/music-button-on.png";
-		String musicOffString = "images/music-button-off.png";
-		ImageView musicOn = getImageView(musicOnString);
-		ImageView musicOff = getImageView(musicOffString);
 		
 		BorderPane borderpane = new BorderPane();
 		VBox box = new VBox();
@@ -322,55 +439,44 @@ public class Game extends Application {
 		box.getChildren().add(n);
 		borderpane.setCenter(box);
 		
+		HBox topRow = new HBox();
 		
-		// Music button
-		HBox topButtons= new HBox();
-		topButtons.setStyle("-fx-background-color: #000000;");
-		Button musicButton = new Button();
+		String roomString = "Room " + room;
+		Text roomText = new Text(roomString);
+		roomText.setFont(gameFont);
+		roomText.setFill(Color.WHITE);
+		roomText.setTextAlignment(TextAlignment.RIGHT);
+		
+		topRow.getChildren().add(roomText);
+		topRow.setAlignment(Pos.CENTER_RIGHT);
+		topRow.setStyle("-fx-background-color: #000000");
+		borderpane.setTop(topRow);
 
-		if (stage_music) musicButton.setGraphic(musicOn);
-		else musicButton.setGraphic(musicOff);
-		
-		musicButton.setStyle("-fx-background-color: #000000");
-		
-		
-		musicButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e){
-				System.out.println("I'VE BEEN CLICKED");
-				if (stage_music)unsetMusic();
-				else setMusic();
-			 }
-			
-		});
-		
-		
-		
-		topButtons.setAlignment(Pos.CENTER_RIGHT);
-		topButtons.getChildren().add(musicButton);
-		
-		
-		
-		borderpane.setTop(topButtons);
-		
 		return borderpane;
 	}
 	
-	private VBox optionsBox(){
+
+	private VBox optionsBox(ArrayList<String> moreOptions){
 		ArrayList<String> options = new ArrayList<String>();
 		String musicOption = "";
 		if (stage_music) musicOption = "music on";
 		else musicOption = "music off";
 		options.add(musicOption);
-		options.add("exit");
+		
+		for (String option: moreOptions){
+			options.add(option);
+		}
 		VBox optionsBox = createMenu(options);
 		return optionsBox;
 	}
-
+	
 	private VBox createMenu(ArrayList<String> menuOptions){
 		int currOption = 0;
 		VBox menu = new VBox();
+
+		if (cursor == -1) cursor += menuOptions.size();
 		cursor = cursor % menuOptions.size();
+		
 		menu.setStyle("-fx-background-color: #000000");
 		menu.setAlignment(Pos.CENTER);
 		for (String menuOption: menuOptions){

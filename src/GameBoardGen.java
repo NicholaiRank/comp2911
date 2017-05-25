@@ -224,10 +224,13 @@ public class GameBoardGen{
 			else if(box.getX() > goal.getX() && box.getY() > goal.getY())  
 			{
 				//goal is top left
+				//gaining access right and bottom
 				String direction= "TL";				
 				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				
 				Coordinates added = new Coordinates(box.getX()+1,box.getY());
 				path.add(added);
+
 				added = new Coordinates(box.getX()+1,box.getY()-1);
 				path.add(added);
 				
@@ -244,12 +247,14 @@ public class GameBoardGen{
 				
 				String direction= "TR";
 
-				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				path = getPath(player,new Coordinates(box.getX(),box.getY()+1)); //correct
+				
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
-				//System.out.println("added: "+added.getX()+","+added.getY());
+				
 				added = new Coordinates(box.getX()-1,box.getY()+1);
-				//System.out.println("added: "+added.getX()+","+added.getY());
+				path.add(added);
+
 				nextPath = getSidePath(box,goal,direction);
 				path.addAll(nextPath);
 				nextPath.clear();
@@ -264,13 +269,13 @@ public class GameBoardGen{
 				String direction= "BL";
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
 
-
 				Coordinates added = new Coordinates(box.getX()+1,box.getY());
 				path.add(added);
-				// System.out.println("added: "+added.getX()+","+added.getY());
-				added = new Coordinates(box.getX()+1,box.getY()-1);
-				// System.out.println("added: "+added.getX()+","+added.getY());
+				//System.out.println("added: "+added.getX()+","+added.getY());
 
+				added = new Coordinates(box.getX()+1,box.getY()-1);
+				path.add(added);
+				//System.out.println("added: "+added.getX()+","+added.getY());
 
 				nextPath = getSidePath(box,goal,direction);
 				path.addAll(nextPath);
@@ -281,18 +286,14 @@ public class GameBoardGen{
 			{
 				//bottom right
 				//gaining accessing to box from left and top yes
-				// System.out.println("reached here box is bottom right ||||||||");
-				// System.out.println("box: "+box.getX()+","+box.getY());
-				// System.out.println("box: "+goal.getX()+","+goal.getY());
-
 				String direction= "BR";
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
 
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
-				// System.out.println("added: "+added.getX()+","+added.getY());
+				
 				added = new Coordinates(box.getX()-1,box.getY()-1);
-				// System.out.println("added: "+added.getX()+","+added.getY());
+				path.add(added);
 					
 				nextPath = getSidePath(box,goal,direction);
 				path.addAll(nextPath);
