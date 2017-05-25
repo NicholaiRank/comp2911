@@ -253,7 +253,7 @@ public class GameBoard {
 		
 		return retString;
 	}
-	
+
 	public GameBoard copyBoard() {
 		GameBoard copy = new GameBoard(this.x, this.y);
 		for (int i = 0; i < this.x; i++) {
@@ -264,5 +264,18 @@ public class GameBoard {
 			}
 		}
 		return copy;
+	}
+
+
+	
+	public void swapBoard(GameBoard g) {	
+		for (int i = 0; i < this.x; i++) {
+			for (int j = 0; j < this.y; j++) {
+				addObj(null,i,j);
+				if (g.getObjectAt(i, j) != null) {
+					addObj((GameBoardObject) g.getObjectAt(i, j), i, j);
+				}
+			}
+		}	
 	}
 }

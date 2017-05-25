@@ -10,23 +10,20 @@ public class KeyPress{
     private Interaction i;
     private Player player;	// This should be the player that is associated with this keypress
 	private GameBoard original;
-	private TileSet tileset;
-	
+    private TileSet tileset;
+
     boolean success, goNorth, goSouth, goEast, goWest, grounded, northPressed, southPressed, eastPressed, westPressed;
 
-    
+
     public KeyPress(GameBoard gameboard, Player player, TileSet tileset){
     	this.g = gameboard;
     	this.i = new Interaction(this.g);
     	this.player = player;
-		this.original = this.g.copyBoard();
-		this.tileset = tileset;
+		this.original = gameboard.copyBoard();
+        this.tileset = tileset;
     }
     
-    /**
-     * Determines what key has been pressed
-     * @param keypress Valid keycode for the key that has been pressed. 
-     */
+    
     public void setFlag(KeyCode keypress){
     	switch (keypress) {
         case UP: goNorth = true; break;                 
@@ -38,16 +35,12 @@ public class KeyPress{
         case A: goWest = true; break;
         case D: goEast = true; break; 
         case R: {
-			this.g = this.original.copyBoard();
-			break;	
+			g.swapBoard(original);
+
     		}
     	}
     }
     
-    /**
-     * Unsets the key flag. (i.e. This key is no longer is being pressed)
-     * @param keypress Valid keycode for the key that is no longer being pressed.
-     */
     public void resetFlags(KeyCode keypress){
         success = false;
     	switch (keypress) {
@@ -64,9 +57,6 @@ public class KeyPress{
     	}
     }
     
-    /**
-     * Makes changes as needed to the gameboard and/or tileSet
-     */
     public void handleInput(){
 
         if (goNorth) {
