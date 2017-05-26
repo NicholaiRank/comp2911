@@ -69,8 +69,7 @@ public class Game extends Application {
     	
     	stage_exit = false;
     	room = 0;
-    	// Get tileset
-    	tileset = new TileSet();
+    	
    	
     	// Initialise resources
     	String songString = "resources/music/puzzleThink.mp3";
@@ -175,9 +174,14 @@ public class Game extends Application {
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
-        GameBoardGen ga = new GameBoardGen(10,15,5,newPlayer);
+        GameBoardGen ga = new GameBoardGen(10,5,1,newPlayer);
 		g = ga.getBoard();
 		
+		// Get tileset
+    	if (room <= 10) tileset = new TileSet(1);
+    	else if (room <= 20) tileset = new TileSet(2);
+    	else tileset = new TileSet(3);
+    	
 		
 		// Attach keypress
         keypress = new KeyPress(g,newPlayer, tileset);
@@ -372,6 +376,8 @@ public class Game extends Application {
 	private void setNewGame() {
 		scene_newgame = true;
 		room++;
+		
+		
 	}
 	private void unsetNewGame() {
 		scene_newgame = false;

@@ -196,12 +196,14 @@ public class GameBoard {
 					
 					switch (symbol) {
 						case 'P': {
-							Node bg;
-							if (gameObject.isOnGoal()) bg = new ImageView(goalImage);
-							else bg = new ImageView(bgImage);
+							Node bg = new ImageView(bgImage);
 							Node hero = new ImageView(heroImage);
 							Group heroG = new Group();
 							heroG.getChildren().add(bg);
+							if (gameObject.isOnGoal()) {
+								Node goal = new ImageView(goalImage); 
+								heroG.getChildren().add(goal);
+							}
 							heroG.getChildren().add(hero);
 							tilePane.getChildren().add(heroG);
 							
@@ -213,15 +215,23 @@ public class GameBoard {
 							break;
 						}
 						case 'B': {
+							Node bg = new ImageView(bgImage);
 							Node crate;
 							if (gameObject.isOnGoal()) crate = new ImageView(crategoalImage);
 							else crate = new ImageView(crateImage);
-							tilePane.getChildren().add(crate);
+							Group crateG = new Group();
+							crateG.getChildren().add(bg);
+							crateG.getChildren().add(crate);
+							tilePane.getChildren().add(crateG);
 							break;
 						}
 						case 'X': {
+							Node bg = new ImageView(bgImage);
 							Node goal = new ImageView(goalImage);
-							tilePane.getChildren().add(goal);
+							Group goalG = new Group();
+							goalG.getChildren().add(bg);
+							goalG.getChildren().add(goal);
+							tilePane.getChildren().add(goalG);
 							break;
 						}
 						case '#': {

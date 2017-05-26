@@ -23,20 +23,20 @@ public class TileSet {
 
 	private ArrayList<Image> tiles;
 	
-	public TileSet(){
+	public TileSet(int stageNum){
 		ArrayList<Image> tiles = new ArrayList<Image>(5);
 		// Generate images
 
-		String hero_pathname = "images/test-hero.png";
-		String bg_pathname = "images/test-bg.png";
-		String crate_pathname = "images/test-crate.png";
-		String goal_pathname = "images/test-goal.png";
-		String wall_pathname = "images/test-wall.png";
-		String heroU_pathname = "images/test-hero-up.png";
-		String heroD_pathname = "images/test-hero-down.png";
-		String heroL_pathname = "images/test-hero-left.png";
-		String heroR_pathname = "images/test-hero-right.png";
-		String crategoal_pathname = "images/test-goalcrate.png";
+		String hero_pathname = "images/1-hero-down.png";
+		String bg_pathname = "images/" + stageNum + "-bg.png";
+		String crate_pathname = "images/" + stageNum + "-crate.png";
+		String goal_pathname = "images/" + stageNum + "-goal.png";
+		String wall_pathname = "images/" + stageNum + "-wall.png";
+		String heroU_pathname = "images/1-hero-up.png";
+		String heroD_pathname = "images/1-hero-down.png";
+		String heroL_pathname = "images/1-hero-left.png";
+		String heroR_pathname = "images/1-hero-right.png";
+		String crategoal_pathname = "images/" + stageNum + "-goalcrate.png";
 		
 		javafx.scene.image.Image hero_Image;
 		javafx.scene.image.Image bg_Image;
