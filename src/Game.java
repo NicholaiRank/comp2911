@@ -57,7 +57,7 @@ public class Game extends Application {
     
     /* SCENE FLAGS */
     private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
-    private boolean scene_settings, scene_pause, scene_cutscene, scene_victory;
+    private boolean scene_settings, scene_pause, scene_cutscene, scene_victory, scene_controls;
     private boolean stage_exit;
     private boolean stage_music;
 
@@ -112,7 +112,7 @@ public class Game extends Application {
     			+ "Time is of the essence. Now go! ");
     	
     	cutscene3.add("Well, that's all I had prepared. \nGood job. ");
-    	cutscene3.add("You are now Scrum Master.");
+    	cutscene3.add("You are now Scrum Lord.");
     	
     	cutsceneText.put("intro", introText);
     	cutsceneText.put("cutscene1", cutscene1);
@@ -163,6 +163,7 @@ public class Game extends Application {
             	else if (scene_newgame == true) scene = showNewGameScene();
             	else if (scene_settings == true) scene = showSettingsScene();
             	else if (scene_pause == true) scene = showPauseScene();
+            	else if (scene_controls == true) scene = showControlsScene();
             	else if (scene_game == true) scene = showGameScene();
 
             	else if (scene_title == true) scene = showTitleScreenScene();
@@ -241,7 +242,15 @@ public class Game extends Application {
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
-        GameBoardGen ga = new GameBoardGen(10, 5, 1,newPlayer);
+    	GameBoardGen ga = new GameBoardGen(10, 5, 1,newPlayer);
+        if (room <= 5) ga = new GameBoardGen(10, 5, 1,newPlayer);
+        if (room <= 10) ga = new GameBoardGen(10, 8, 2,newPlayer);
+        if (room <= 15) ga = new GameBoardGen(10, 10, 2,newPlayer);
+        if (room <= 20) ga = new GameBoardGen(10, 12, 3,newPlayer);
+        if (room <= 25) ga = new GameBoardGen(15, 10, 5,newPlayer);
+        if (room <= 30) ga = new GameBoardGen(16, 16, 6,newPlayer);
+        else if (room > 30) ga = new GameBoardGen(22, 16, 20,newPlayer);
+        
 		g = ga.getBoard();
 		
 		// Get tileset
@@ -340,6 +349,7 @@ public class Game extends Application {
     	
     	ArrayList<String> menuOptions = new ArrayList<String>();
     	menuOptions.add("Play");
+    	menuOptions.add("Controls");
     	menuOptions.add("Settings");
     	menuOptions.add("Quit Game");
     	VBox menu = createMenu(menuOptions);
@@ -357,8 +367,9 @@ public class Game extends Application {
     			case ENTER: {
     					switch(cursor){
     					case 0: unsetTitle(); setNewGame(); cursorReset(); break;
-    					case 1: unsetTitle(); setSettings(); cursorReset(); break;
-    					case 2: stage_exit = true; break;
+    					case 1: unsetTitle(); setControls(); cursorReset(); break;
+    					case 2: unsetTitle(); setSettings(); cursorReset(); break;
+    					case 3: stage_exit = true; break;
     					}
     				}
     			
@@ -521,12 +532,66 @@ public class Game extends Application {
     			switch(event.getCode()){
     			case UP: cursorUp(); break;
     			case DOWN: cursorDown(); break;
-    			case ESCAPE: unsetSettings(); setGame(); cursorReset(); break;
     			case ENTER: {
     					switch(cursor){
 
     					case 0: unsetVictory(); cursorReset(); break;
     					case 1: unsetVictory(); setTitle(); cursorReset(); break;
+
+    					}
+    				}
+    			
+    			}
+    		}
+    	});
+	
+    	return scene;
+		
+		
+    }
+    
+    private Scene showControlsScene(){
+    	BorderPane borderpane = new BorderPane();
+    	borderpane.setPadding(new Insets(150.0, 10.0, 10.0, 10.0));
+    	borderpane.setStyle("-fx-background-color: #000000");
+    	
+
+		
+		Text controls = new Text("Controls:\n\n"
+				+ "W or UP:    Move up\n"
+				+ "S or DOWN:    Move down\n"
+				+ "A or LEFT:    Move left\n"
+				+ "D or RIGHT:    Move right\n"
+				+ "    R:    Reset\n"
+				+ "       ESC:    Pause menu"
+				);
+		controls.setFont(gameFont);
+		controls.setFill(Color.WHITE);
+		controls.setTextAlignment(TextAlignment.CENTER);
+		VBox center = new VBox();
+		center.setAlignment(Pos.CENTER);
+		center.setStyle("-fx-background-color: #000000");
+
+		center.getChildren().add(controls);
+	
+		ArrayList<String> options = new ArrayList<String>();
+		options.add("Main Menu");
+		
+		VBox menu = createMenu(options);
+
+		borderpane.setCenter(center);
+		borderpane.setBottom(menu);
+		
+		Scene scene = new Scene(borderpane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			switch(event.getCode()){
+
+	    			case ENTER: {
+	    					switch(cursor){
+	
+	    					case 0: unsetControls(); setTitle(); cursorReset(); break;
 
     					}
     				}
@@ -606,6 +671,15 @@ public class Game extends Application {
 	
 	private void unsetVictory() {
 		scene_victory = false;
+	}
+	
+	private void setControls() {
+		cursorReset();
+		scene_controls = true;
+	}
+	
+	private void unsetControls() {
+		scene_controls = false;
 	}
 	
 	private void setMusic() {
