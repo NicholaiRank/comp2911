@@ -34,7 +34,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-/*
+/**
  * This class is used to display the game for the user. 
  * It creates the gameboard and displays the needed information to the user.
  */
@@ -149,7 +149,7 @@ public class Game extends Application {
         stage.setTitle("Wobquest");
         stage.show();
 
-
+        // Loop happens here. Depending on which scene flags are set, a scene will be displayed to the user.
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -239,6 +239,10 @@ public class Game extends Application {
     	return scene;
     }
     
+    /**
+     * This method is in charge of generating a new board. Once generated, the game scene's flag is set.
+     * @return A scene
+     */
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
@@ -301,6 +305,10 @@ public class Game extends Application {
     	return scene;
     }
     
+    /**
+     * This method creates scene used as a transition between rooms
+     * @return a scene
+     */
     private Scene showRoomCompleteScene() {
     	// Setup layout
     	BorderPane borderpane = new BorderPane();
@@ -336,6 +344,10 @@ public class Game extends Application {
     	return scene;
     }
     
+    /**
+     * This method displays an interactive scene that the user uses to choose where to navigate to in the game.
+     * @return A scene
+     */
     private Scene showTitleScreenScene() {
     	// Setup layout
     	BorderPane borderpane = new BorderPane();
@@ -381,6 +393,10 @@ public class Game extends Application {
     	return scene;
     }
     
+    /**
+     * Shows a settings scene that can be used to change settings
+     * @return A scene
+     */
     private Scene showSettingsScene(){
     	BorderPane borderpane = new BorderPane();
     	
@@ -416,6 +432,11 @@ public class Game extends Application {
     	return scene;
     	
     }
+    
+    /**
+     * Pauses gameplay and allows users to change settings
+     * @return a scene
+     */
     private Scene showPauseScene(){
     	BorderPane borderpane = new BorderPane();
     	ArrayList<String> menuOption = new ArrayList<String>();
@@ -454,6 +475,10 @@ public class Game extends Application {
     	return scene;
     }
     
+    /**
+     * Shows a cutscene that either gives the player instructions and some story.
+     * @return A scene
+     */
     private Scene showCutScene(){
     	// Determine current string
     	try {
@@ -492,6 +517,11 @@ public class Game extends Application {
     	
     }
     
+    
+    /**
+     * Last scene of the game. Allows players to continue playing or go to main menu
+     * @return A scene
+     */
     private Scene showVictoryScene(){
     	BorderPane borderpane = new BorderPane();
     	borderpane.setPadding(new Insets(150.0, 10.0, 10.0, 10.0));
@@ -551,6 +581,10 @@ public class Game extends Application {
 		
     }
     
+    /**
+     * Shows a screen that informs the player of what keys to press
+     * @return A scene
+     */
     private Scene showControlsScene(){
     	BorderPane borderpane = new BorderPane();
     	borderpane.setPadding(new Insets(150.0, 10.0, 10.0, 10.0));
@@ -690,10 +724,20 @@ public class Game extends Application {
 		stage_music = false;
 	}
 	
+	/**
+	 * Method gets absolute path of a given path
+	 * @param rpath relative path
+	 * @return absolute path
+	 */
 	private String getFileName(String rpath) {
 		return new File(rpath).toURI().toString();
 	}
 	
+	/**
+	 * Creates an image view based on the given path
+	 * @param rpath relative path
+	 * @return image view
+	 */
 	private ImageView getImageView(String rpath) {
 		javafx.scene.image.Image image = new javafx.scene.image.Image(getFileName(rpath));
 		ImageView imageView = new ImageView(image);
@@ -701,6 +745,11 @@ public class Game extends Application {
 		
 	}
 	
+	/**
+	 * Decorates a given node with the standard game board stuff. For uniformity.
+	 * @param n Node. Typically the TilePane the gameboard has been generated in.
+	 * @return BorderPane for layout
+	 */
 	private BorderPane decorateGameBorder(Node n){
 		
 		BorderPane borderpane = new BorderPane();
@@ -727,7 +776,11 @@ public class Game extends Application {
 		return borderpane;
 	}
 	
-
+	/**
+	 * Creates a box used for options
+	 * @param moreOptions Used to add options to the bottom of the options list
+	 * @return VBox. A good node.
+	 */
 	private VBox optionsBox(ArrayList<String> moreOptions){
 		ArrayList<String> options = new ArrayList<String>();
 		String musicOption = "";
@@ -742,6 +795,12 @@ public class Game extends Application {
 		return optionsBox;
 	}
 	
+	/**
+	 * Creates a menu based on what options are given. 
+	 * Allows highlighting of the currently selected option based on cursor
+	 * @param menuOptions A list of options to add to the menu at the bottom
+	 * @return A VBox. A good node.
+	 */
 	private VBox createMenu(ArrayList<String> menuOptions){
 		int currOption = 0;
 		VBox menu = new VBox();
@@ -771,6 +830,11 @@ public class Game extends Application {
 		return menu;
 	}
 	
+	/**
+	 * Creates a cutscene with the dialogue needed. Use for uniform cutscenes.
+	 * @param cutsceneDialogue Dialogue to be used in the cutscene
+	 * @return A formatted borderpane
+	 */
 	private BorderPane cutsceneTemplate(String cutsceneDialogue){
 		BorderPane borderpane = new BorderPane();
 		ImageView wizard = getImageView("images/wobckethewise-big.png");
@@ -815,13 +879,23 @@ public class Game extends Application {
 		return borderpane;
 	}
 	
+	/**
+	 * Resets the cursor
+	 */
 	private void cursorReset(){
 		cursor = 0;
 	}
+	
+	/**
+	 * Makes the cursor go up on screen
+	 */
 	private void cursorUp(){
 		cursor--;
 	}
 	
+	/**
+	 * Makes the cursor go down on screen
+	 */
 	private void cursorDown(){
 		cursor++;
 	}
