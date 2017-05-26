@@ -57,7 +57,7 @@ public class Game extends Application {
     
     /* SCENE FLAGS */
     private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
-    private boolean scene_settings, scene_pause, scene_cutscene;
+    private boolean scene_settings, scene_pause, scene_cutscene, scene_victory;
     private boolean stage_exit;
     private boolean stage_music;
 
@@ -127,7 +127,7 @@ public class Game extends Application {
     	unsetSettings();
     	unsetPause();
     	unsetCutscene();
-    	
+    	unsetVictory();
     	
     	stage_exit = false;
     	room = 0;
@@ -158,11 +158,13 @@ public class Game extends Application {
             	if (stage_music == true) player.play();
             	else player.stop();
             	if (scene_cutscene == true) scene = showCutScene();
+            	else if (scene_victory == true) scene = showVictoryScene();
             	else if (scene_roomcomplete == true) scene = showRoomCompleteScene();
             	else if (scene_newgame == true) scene = showNewGameScene();
             	else if (scene_settings == true) scene = showSettingsScene();
             	else if (scene_pause == true) scene = showPauseScene();
             	else if (scene_game == true) scene = showGameScene();
+
             	else if (scene_title == true) scene = showTitleScreenScene();
             	else scene = showTitleScreenScene();
 
@@ -216,8 +218,10 @@ public class Game extends Application {
             	if (event.getCode() == KeyCode.ESCAPE) {
             		unsetGame(); 
             		setPause();
-            	}
-            	else {
+            	} else if (event.getCode() == KeyCode.N){
+            		unsetNewGame();
+            		setRoomComplete();
+            	} else {
             		keypress.setFlag(event.getCode());
             	}
                 
@@ -266,8 +270,10 @@ public class Game extends Application {
             	if (event.getCode() == KeyCode.ESCAPE) {
             		unsetGame(); 
             		setPause();
-            	}
-            	else {
+            	} else if (event.getCode() == KeyCode.N){
+            		unsetNewGame();
+            		setRoomComplete();
+            	} else {
             		keypress.setFlag(event.getCode());
             	}
                 
@@ -438,11 +444,17 @@ public class Game extends Application {
     
     private Scene showCutScene(){
     	// Determine current string
+    	try {
+			TimeUnit.MILLISECONDS.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	ArrayList<String> cutsceneList = new ArrayList<String>();
     	if (room < 10) cutsceneList = cutsceneText.get("intro");
     	else if (room < 20) cutsceneList = cutsceneText.get("cutscene1");
     	else if (room < 30) cutsceneList = cutsceneText.get("cutscene2");
-    	else cutsceneList = cutsceneText.get("cutscene3");
+    	else if (room < 40) cutsceneList = cutsceneText.get("cutscene3");
     	
     	final int listsize = cutsceneList.size();
     	String currString = cutsceneList.get(cursor);
@@ -453,11 +465,13 @@ public class Game extends Application {
     		@Override
     		public void handle(KeyEvent event){
     			cursor++;
- //   			if (room >= 30) {
-   // 				setVictory();
-  //  			}
+    			
     			if (cursor == listsize) {
+    				if (room == 31) {
+        				setVictory();
+        			}
     				unsetCutscene(); 
+    				cursorReset();
     			}
     		}
     	});
@@ -466,14 +480,70 @@ public class Game extends Application {
     	
     }
     
- //   private Scene showVictoryScene(){
- //   	BorderPane borderpane = new BorderPane();
- //   }
+    private Scene showVictoryScene(){
+    	BorderPane borderpane = new BorderPane();
+    	borderpane.setPadding(new Insets(150.0, 10.0, 10.0, 10.0));
+    	borderpane.setStyle("-fx-background-color: #000000");
+    	
+    	Label thanks = new Label("Thanks for playing!");
+		thanks.setFont(gameFont);
+		thanks.setTextFill(Color.CRIMSON);
+		thanks.setTextAlignment(TextAlignment.CENTER);
+		thanks.setStyle("-fx-background-color: #000000");
+    	
+		ImageView victory = getImageView("images/victory.png");
+		
+		Text credits = new Text("Made by:\nAsher Silvers        Max Kelly-Mills\nNaomi Que        Usman Haidar\n"
+				+ "\nSpecial Thanks:\nNicholai Rank");
+		credits.setFont(gameFont);
+		credits.setFill(Color.POWDERBLUE);
+		credits.setTextAlignment(TextAlignment.CENTER);
+		VBox center = new VBox();
+		center.setAlignment(Pos.CENTER);
+		center.setStyle("-fx-background-color: #000000");
+		center.getChildren().add(victory);
+		center.getChildren().add(credits);
+	
+		ArrayList<String> options = new ArrayList<String>();
+		options.add("Continue Playing");
+		options.add("Main Menu");
+		
+		VBox menu = createMenu(options);
+		borderpane.setTop(thanks);
+		borderpane.setAlignment(thanks, Pos.CENTER);
+		borderpane.setCenter(center);
+		borderpane.setBottom(menu);
+		
+		Scene scene = new Scene(borderpane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			switch(event.getCode()){
+    			case UP: cursorUp(); break;
+    			case DOWN: cursorDown(); break;
+    			case ESCAPE: unsetSettings(); setGame(); cursorReset(); break;
+    			case ENTER: {
+    					switch(cursor){
+
+    					case 0: unsetVictory(); cursorReset(); break;
+    					case 1: unsetVictory(); setTitle(); cursorReset(); break;
+
+    					}
+    				}
+    			
+    			}
+    		}
+    	});
+	
+    	return scene;
+		
+		
+    }
     /****************************************
      * SET/UNSET SCENE FLAG METHODS
      ***************************************/
 	private void setNewGame() {
-		if (room == 0 || room == 10 || room == 20) setCutscene();
+		if (room == 0 || room == 10 || room == 20 || room == 30) setCutscene();
 		room++;
 		
 		scene_newgame = true;
@@ -527,6 +597,15 @@ public class Game extends Application {
 	
 	private void unsetCutscene() {
 		scene_cutscene = false;
+	}
+	
+	private void setVictory() {
+		cursorReset();
+		scene_victory = true;
+	}
+	
+	private void unsetVictory() {
+		scene_victory = false;
 	}
 	
 	private void setMusic() {
