@@ -198,6 +198,7 @@ public class GameBoardGen{
 			{
 				//goal is to the left of box.
 				//come in from the box's right side + clear path to goal
+
 				path = getPath(player,new Coordinates(box.getX()+1,box.getY()));
 				for(int i=goal.getX();i<box.getX();i++)
 				{
@@ -246,14 +247,16 @@ public class GameBoardGen{
 				//gaining accessing to box from left and bottom
 				
 				String direction= "TR";
-
+			
 				path = getPath(player,new Coordinates(box.getX(),box.getY()+1)); //correct
 				
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
+				//System.out.println("added: "+added.getX()+","+added.getY());
 				
 				added = new Coordinates(box.getX()-1,box.getY()+1);
 				path.add(added);
+				//System.out.println("added: "+added.getX()+","+added.getY());
 
 				nextPath = getSidePath(box,goal,direction);
 				path.addAll(nextPath);
@@ -286,14 +289,19 @@ public class GameBoardGen{
 			{
 				//bottom right
 				//gaining accessing to box from left and top yes
+
+				
+
 				String direction= "BR";
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
-
+				
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
-				
+				//System.out.println("added: "+added.getX()+","+added.getY());
+
 				added = new Coordinates(box.getX()-1,box.getY()-1);
 				path.add(added);
+				//System.out.println("added: "+added.getX()+","+added.getY());
 					
 				nextPath = getSidePath(box,goal,direction);
 				path.addAll(nextPath);
@@ -309,6 +317,9 @@ public class GameBoardGen{
 			combinedPath.addAll(path);
 		}
 
+
+		combinedPath.addAll(finalCheck(boxes));
+
 		return combinedPath;
 	}
 
@@ -318,7 +329,7 @@ public class GameBoardGen{
 		ArrayList<Coordinates> path = new ArrayList<Coordinates>();
 		path.add(start);
 
-		ArrayList<Coordinates> adjacentAvailable = new ArrayList<Coordinates>();
+		//ArrayList<Coordinates> adjacentAvailable = new ArrayList<Coordinates>();
 		Coordinates current = start;
 
 		while (checkIfSame(current,finish)!=true) 
@@ -543,6 +554,42 @@ public class GameBoardGen{
 		}
 		
 	}
+
+
+	ArrayList<Coordinates> finalCheck (ArrayList<Coordinates> boxes)
+	{
+
+		ArrayList<Coordinates> toBeReturned = new ArrayList<Coordinates>();
+
+		for(Coordinates box: boxes)
+		{
+			if(board.getObjectAt( box.getX(),box.getY()+1) instanceof Box)
+			{	
+				// sides if needed
+				// toBeReturned.add(new Coordinates(box.getX()-1,box.getY()));
+				// toBeReturned.add(new Coordinates(box.getX()+1,box.getY()));
+
+				//all important diagonals clearing top right and top middle
+				toBeReturned.add(new Coordinates(box.getX()-1,box.getY()-1));
+				//System.out.println("meant to be added: "+(box.getX()-1)+","+(box.getY()-1));
+
+				toBeReturned.add(new Coordinates(box.getX()+1,box.getY()-1));
+				//System.out.println("meant to be added: "+(box.getX()+1)+","+(box.getY()-1));
+				//add other points around if needed
+				// toBeReturned.add(new Coordinates(box.getX(),box.getY()));
+				// toBeReturned.add(new Coordinates(box.getX(),box.getY()));
+
+				// toBeReturned.add(new Coordinates(box.getX(),box.getY()));
+				// toBeReturned.add(new Coordinates(box.getX(),box.getY()));
+				//return toBeReturned;
+			}
+		}
+
+
+		toBeReturned.add(new Coordinates(1,1)); //just in case
+		return toBeReturned;
+
+	}	
 
 }
 

@@ -1,12 +1,14 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -51,21 +53,81 @@ public class Game extends Application {
 
     
     private Font gameFont;
+    private HashMap<String, ArrayList<String>> cutsceneText = new HashMap<String, ArrayList<String>>();
     
     /* SCENE FLAGS */
     private boolean scene_newgame, scene_game, scene_title, scene_roomcomplete;
-    private boolean scene_settings, scene_pause;
+    private boolean scene_settings, scene_pause, scene_cutscene;
     private boolean stage_exit;
     private boolean stage_music;
 
     @Override
     public void start(Stage stage) throws Exception {
+    	ArrayList<String> introText = new ArrayList<String>();
+    	ArrayList<String> cutscene1 = new ArrayList<String>();
+    	ArrayList<String> cutscene2 = new ArrayList<String>();
+    	ArrayList<String> cutscene3 = new ArrayList<String>();
+    	
+    	introText.add("\nGreetings young knight-in-training. "
+    			+ "\nI am Wobcke the Wise, here to guide "
+    			+ "\nyou on the path of Toyota to become "
+    			+ "\nthe ultimate Scrum Lord.");
+    	introText.add("\nToday I will be needing you to push \n"
+    			+ "some crates for me. \n"
+    			+ "Simply push the crates onto the \n"
+    			+ "squares marked with a red X.");
+    	
+    	introText.add("\nWhat? \n"
+    			+ "Of course it's for training! \n"
+    			+ "Being Scrum Lord requires a \n"
+    			+ "little conditioning you know. \n\n"
+    			+ "Come on now! \n"
+    			+ "We have no more time to waste.");
+ 
+    	cutscene1.add("\nExcellent. I see you have \n"
+    			+ "completed your morning warm-up. \n"
+    			+ "Now it is time for your real \n"
+    			+ "training!");
+    	
+    	cutscene1.add("\nDue to unforeseen circumstances, \n"
+    			+ "our campervan rental system \n"
+    			+ "has died. What? Of course we \n"
+    			+ "have campervans in the magical\n"
+    			+ "kingdom of Java.");
+    	
+    	cutscene1.add("\nDid you think we were living in\n"
+    			+ "the Dark Ages? Actually, don't\n"
+    			+ "answer that. We must go now!");
+    	
+    	cutscene2.add("\nAh. I am mildly surprised you have\n"
+    			+ "come this far. But it was to \n"
+    			+ "be expected. Alas, your real trials \n"
+    			+ "start now. ");
+    	
+    	cutscene2.add("\nOur trucks from A STAR have \n"
+    			+ "yet to return from their deliveries. \n"
+    			+ "Find them and send them back \n"
+    			+ "into the nearest city so we \n"
+    			+ "can fix their delivery systems. \n"
+    			+ "Time is of the essence. Now go! ");
+    	
+    	cutscene3.add("Well, that's all I had prepared. \nGood job. ");
+    	cutscene3.add("You are now Scrum Master.");
+    	
+    	cutsceneText.put("intro", introText);
+    	cutsceneText.put("cutscene1", cutscene1);
+    	cutsceneText.put("cutscene2", cutscene2);
+    	cutsceneText.put("cutscene3", cutscene3);
     	
     	// unset all flags
     	unsetNewGame();
     	unsetGame();
     	unsetTitle();
     	unsetRoomComplete();
+    	unsetSettings();
+    	unsetPause();
+    	unsetCutscene();
+    	
     	
     	stage_exit = false;
     	room = 0;
@@ -95,11 +157,12 @@ public class Game extends Application {
             	// Play music
             	if (stage_music == true) player.play();
             	else player.stop();
-            	if (scene_game == true) scene = showGameScene();
+            	if (scene_cutscene == true) scene = showCutScene();
             	else if (scene_roomcomplete == true) scene = showRoomCompleteScene();
             	else if (scene_newgame == true) scene = showNewGameScene();
             	else if (scene_settings == true) scene = showSettingsScene();
             	else if (scene_pause == true) scene = showPauseScene();
+            	else if (scene_game == true) scene = showGameScene();
             	else if (scene_title == true) scene = showTitleScreenScene();
             	else scene = showTitleScreenScene();
 
@@ -174,7 +237,7 @@ public class Game extends Application {
     private Scene showNewGameScene(){
     	// Generate new gameboard, player, keypress, interaction and tileset here
     	Player newPlayer = new Player("PLAYER");
-        GameBoardGen ga = new GameBoardGen(10,5,1,newPlayer);
+        GameBoardGen ga = new GameBoardGen(10, 5, 1,newPlayer);
 		g = ga.getBoard();
 		
 		// Get tileset
@@ -233,8 +296,9 @@ public class Game extends Application {
     	
     	Text t = new Text();
     	t.setText("Room Completed.\nCongratulations.");
+    	t.setTextAlignment(TextAlignment.CENTER);
     	t.setFont(gameFont);
-    	t.setFill(Color.RED);
+    	t.setFill(Color.CRIMSON);
     	
     	Text pressNext = new Text();
     	pressNext.setText("\n\n\n\n\n\nPress any key to continue");
@@ -350,6 +414,7 @@ public class Game extends Application {
     			switch(event.getCode()){
     			case UP: cursorUp(); break;
     			case DOWN: cursorDown(); break;
+    			case ESCAPE: unsetSettings(); setGame(); cursorReset(); break;
     			case ENTER: {
     					switch(cursor){
     					case 0: {
@@ -358,7 +423,7 @@ public class Game extends Application {
     							else setMusic();
     							break;
     						}
-    					case 1: unsetSettings(); setGame(); cursorReset(); break;
+    					case 1: unsetPause(); setGame(); cursorReset(); break;
     					case 2: unsetPause(); setTitle(); cursorReset(); break;
 
     					}
@@ -370,12 +435,49 @@ public class Game extends Application {
 	
     	return scene;
     }
+    
+    private Scene showCutScene(){
+    	// Determine current string
+    	ArrayList<String> cutsceneList = new ArrayList<String>();
+    	if (room < 10) cutsceneList = cutsceneText.get("intro");
+    	else if (room < 20) cutsceneList = cutsceneText.get("cutscene1");
+    	else if (room < 30) cutsceneList = cutsceneText.get("cutscene2");
+    	else cutsceneList = cutsceneText.get("cutscene3");
+    	
+    	final int listsize = cutsceneList.size();
+    	String currString = cutsceneList.get(cursor);
+    	BorderPane cutscenePane = cutsceneTemplate(currString);
+    	
+    	Scene scene = new Scene(cutscenePane, W, H, Color.BLACK);
+    	scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
+    		@Override
+    		public void handle(KeyEvent event){
+    			cursor++;
+ //   			if (room >= 30) {
+   // 				setVictory();
+  //  			}
+    			if (cursor == listsize) {
+    				unsetCutscene(); 
+    			}
+    		}
+    	});
+	
+    	return scene;
+    	
+    }
+    
+ //   private Scene showVictoryScene(){
+ //   	BorderPane borderpane = new BorderPane();
+ //   }
     /****************************************
      * SET/UNSET SCENE FLAG METHODS
      ***************************************/
 	private void setNewGame() {
-		scene_newgame = true;
+		if (room == 0 || room == 10 || room == 20) setCutscene();
 		room++;
+		
+		scene_newgame = true;
+		
 		
 		
 	}
@@ -418,6 +520,15 @@ public class Game extends Application {
 		scene_pause = false;
 	}
 	
+	private void setCutscene() {
+		cursorReset();
+		scene_cutscene = true;
+	}
+	
+	private void unsetCutscene() {
+		scene_cutscene = false;
+	}
+	
 	private void setMusic() {
 		stage_music = true;
 	}
@@ -454,8 +565,9 @@ public class Game extends Application {
 		roomText.setTextAlignment(TextAlignment.RIGHT);
 		
 		topRow.getChildren().add(roomText);
-		topRow.setAlignment(Pos.CENTER_RIGHT);
+		topRow.setAlignment(Pos.BOTTOM_RIGHT);
 		topRow.setStyle("-fx-background-color: #000000");
+		topRow.setPadding(new Insets(10.0,10.0,0.0,0.0));
 		borderpane.setTop(topRow);
 
 		return borderpane;
@@ -505,14 +617,58 @@ public class Game extends Application {
 		return menu;
 	}
 	
-	public void cursorReset(){
+	private BorderPane cutsceneTemplate(String cutsceneDialogue){
+		BorderPane borderpane = new BorderPane();
+		ImageView wizard = getImageView("images/wobckethewise-big.png");
+		
+		borderpane.setStyle("-fx-background-color: #000000");
+		
+		// create dialogue box
+		String wizardName = "Wobcke the Wise";
+		VBox dialogueBox = new VBox();
+		dialogueBox.setAlignment(Pos.CENTER);
+		Label name = new Label(wizardName);
+		name.setMinWidth(500);
+		name.setFont(gameFont);
+		name.setTextFill(Color.CRIMSON);
+		name.setAlignment(Pos.CENTER_LEFT);
+		Text dialogue = new Text(cutsceneDialogue);
+		dialogue.setFont(gameFont);
+		dialogue.setFill(Color.POWDERBLUE);
+		dialogue.setTextAlignment(TextAlignment.LEFT);
+		
+		
+		HBox speakerBox = new HBox();
+		speakerBox.setAlignment(Pos.CENTER);
+		speakerBox.setSpacing(20.0);
+		speakerBox.getChildren().add(wizard);
+		speakerBox.getChildren().add(name);
+		dialogueBox.setMinHeight(500);
+		dialogueBox.setMinWidth(700);
+		dialogueBox.getChildren().add(speakerBox);
+		dialogueBox.getChildren().add(dialogue);
+
+		
+		Text pressNext = new Text("Press any key to continue");
+		pressNext.setFont(gameFont);
+		pressNext.setFill(Color.WHITE);
+		pressNext.setTextAlignment(TextAlignment.CENTER);
+		
+		borderpane.setCenter(dialogueBox);
+		borderpane.setBottom(pressNext);
+		borderpane.setAlignment(pressNext, Pos.CENTER);
+		borderpane.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
+		return borderpane;
+	}
+	
+	private void cursorReset(){
 		cursor = 0;
 	}
-	public void cursorUp(){
+	private void cursorUp(){
 		cursor--;
 	}
 	
-	public void cursorDown(){
+	private void cursorDown(){
 		cursor++;
 	}
 }
