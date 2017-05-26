@@ -245,11 +245,11 @@ public class Game extends Application {
 
     	GameBoardGen ga = new GameBoardGen(10, 5, 1,newPlayer);
         if (room <= 5) ga = new GameBoardGen(10, 5, 1,newPlayer);
-        if (room <= 10) ga = new GameBoardGen(10, 8, 2,newPlayer);
-        if (room <= 15) ga = new GameBoardGen(10, 10, 2,newPlayer);
-        if (room <= 20) ga = new GameBoardGen(10, 12, 3,newPlayer);
-        if (room <= 25) ga = new GameBoardGen(15, 10, 5,newPlayer);
-        if (room <= 30) ga = new GameBoardGen(16, 16, 6,newPlayer);
+        else if (room <= 10) ga = new GameBoardGen(10, 8, 2,newPlayer);
+        else if (room <= 15) ga = new GameBoardGen(10, 10, 2,newPlayer);
+        else if (room <= 20) ga = new GameBoardGen(10, 12, 3,newPlayer);
+        else if (room <= 25) ga = new GameBoardGen(15, 10, 5,newPlayer);
+        else if (room <= 30) ga = new GameBoardGen(16, 16, 6,newPlayer);
         else if (room > 30) ga = new GameBoardGen(22, 16, 20,newPlayer);
         
 		g = ga.getBoard();

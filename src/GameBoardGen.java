@@ -174,7 +174,9 @@ public class GameBoardGen{
 			if(box.getX() == goal.getX() && box.getY() < goal.getY())
 			{
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
-
+				if (path == null) {
+					continue;
+				}
 				for(int i=box.getY();i<goal.getY();i++)
 				{
 					Coordinates added = new Coordinates(box.getX(),i);
@@ -187,6 +189,9 @@ public class GameBoardGen{
 			else if(box.getX() == goal.getX() && box.getY() > goal.getY())
 			{					
 				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				if (path == null) {
+					continue;
+				}
 				for(int i=goal.getY();i<box.getY();i++)
 				{
 					path.add(new Coordinates(goal.getX(),i));
@@ -200,6 +205,9 @@ public class GameBoardGen{
 				//come in from the box's right side + clear path to goal
 
 				path = getPath(player,new Coordinates(box.getX()+1,box.getY()));
+				if (path == null) {
+					continue;
+				}
 				for(int i=goal.getX();i<box.getX();i++)
 				{
 					path.add(new Coordinates(i,goal.getY()));
@@ -213,6 +221,9 @@ public class GameBoardGen{
 				//goal is to the right of the box.
 				//come in from left of box and clear path to goal
 				path = getPath(player,new Coordinates(box.getX()-1,box.getY()));
+				if (path == null) {
+					continue;
+				}
 				for(int i=box.getX();i<goal.getX();i++)
 				{
 					path.add(new Coordinates(i,box.getY()));
@@ -228,6 +239,9 @@ public class GameBoardGen{
 				//gaining access right and bottom
 				String direction= "TL";				
 				path = getPath(player,new Coordinates(box.getX(),box.getY()+1));
+				if (path == null) {
+					continue;
+				}
 				
 				Coordinates added = new Coordinates(box.getX()+1,box.getY());
 				path.add(added);
@@ -249,6 +263,9 @@ public class GameBoardGen{
 				String direction= "TR";
 			
 				path = getPath(player,new Coordinates(box.getX(),box.getY()+1)); //correct
+				if (path == null) {
+					continue;
+				}
 				
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
@@ -271,6 +288,9 @@ public class GameBoardGen{
 
 				String direction= "BL";
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
+				if (path == null) {
+					continue;
+				}
 
 				Coordinates added = new Coordinates(box.getX()+1,box.getY());
 				path.add(added);
@@ -294,6 +314,9 @@ public class GameBoardGen{
 
 				String direction= "BR";
 				path = getPath(player,new Coordinates(box.getX(),box.getY()-1));
+				if (path == null) {
+					continue;
+				}
 				
 				Coordinates added = new Coordinates(box.getX()-1,box.getY());
 				path.add(added);
@@ -312,6 +335,9 @@ public class GameBoardGen{
 			{
 				//here just in case never quite reaches here
 				path = getPath(player,box);
+				if (path == null) {
+					continue;
+				}
 			}
 
 			combinedPath.addAll(path);
@@ -335,6 +361,9 @@ public class GameBoardGen{
 		while (checkIfSame(current,finish)!=true) 
 		{
 			current = getClosest(current,finish,path);
+			if (current == null) {
+				return null;
+			}
 			//System.out.println("just added: " +current.getX() + "," +current.getY());
 			path.add(current);
 		}
@@ -415,8 +444,10 @@ public class GameBoardGen{
 		if(q.isEmpty())
 		{
 			//q.add(new Coordinates(5,5)); //might be issue here
-			System.out.println("empty queue EXITING"); 
-			System.exit(0);
+			//System.out.println("empty queue EXITING"); 
+			//System.exit(0);
+			//if this fails generate a new board
+			return null;
 		}
 
 		Coordinates next = q.poll();
